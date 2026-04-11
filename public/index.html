@@ -318,8 +318,18 @@
     text-transform: uppercase; color: var(--champagne); margin-bottom: 40px;
   }
 
+  .scratch-rows {
+    display: flex; flex-direction: column; gap: 20px; align-items: center; margin-bottom: 24px;
+  }
+
+  .scratch-event-label {
+    font-family: var(--font-display); font-size: 12px; font-weight: 400;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--navy);
+    opacity: 0.6; margin-bottom: 10px;
+  }
+
   .scratch-circles {
-    display: flex; gap: 20px; justify-content: center; margin-bottom: 24px;
+    display: flex; gap: 20px; justify-content: center;
   }
 
   .scratch-card {
@@ -716,19 +726,41 @@
   <!-- SEC 2: SCRATCH TO REVEAL -->
   <div class="invite-section sec-scratch" id="secScratch">
     <div class="scratch-label fade-in">Reveal</div>
-    <div class="scratch-sublabel fade-in">Scratch to discover the date</div>
-    <div class="scratch-circles">
-      <div class="scratch-card" id="scratch1">
-        <canvas id="scratchCanvas1" width="200" height="200"></canvas>
-        <div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div>
+    <div class="scratch-sublabel fade-in">Scratch to discover the dates</div>
+    <div class="scratch-rows">
+      <div>
+        <div class="scratch-event-label">Mehndi</div>
+        <div class="scratch-circles">
+          <div class="scratch-card" id="scratch1">
+            <canvas id="scratchCanvas1" width="200" height="200"></canvas>
+            <div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div>
+          </div>
+          <div class="scratch-card" id="scratch2">
+            <canvas id="scratchCanvas2" width="200" height="200"></canvas>
+            <div class="scratch-value"><span class="num">28</span><span class="label">Day</span></div>
+          </div>
+          <div class="scratch-card" id="scratch3">
+            <canvas id="scratchCanvas3" width="200" height="200"></canvas>
+            <div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div>
+          </div>
+        </div>
       </div>
-      <div class="scratch-card" id="scratch2">
-        <canvas id="scratchCanvas2" width="200" height="200"></canvas>
-        <div class="scratch-value"><span class="num">28</span><span class="label">Day</span></div>
-      </div>
-      <div class="scratch-card" id="scratch3">
-        <canvas id="scratchCanvas3" width="200" height="200"></canvas>
-        <div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div>
+      <div>
+        <div class="scratch-event-label">Shaadi</div>
+        <div class="scratch-circles">
+          <div class="scratch-card" id="scratch4">
+            <canvas id="scratchCanvas4" width="200" height="200"></canvas>
+            <div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div>
+          </div>
+          <div class="scratch-card" id="scratch5">
+            <canvas id="scratchCanvas5" width="200" height="200"></canvas>
+            <div class="scratch-value"><span class="num">29</span><span class="label">Day</span></div>
+          </div>
+          <div class="scratch-card" id="scratch6">
+            <canvas id="scratchCanvas6" width="200" height="200"></canvas>
+            <div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="scratch-hint" id="scratchHint">Scratch all three to continue</div>
@@ -785,42 +817,16 @@
   <!-- SEC 5: DRESS CODE -->
   <div class="invite-section sec-dresscode" id="secDress">
     <div class="dc-title fade-in">Dress Code</div>
-    <div class="dc-sub fade-in">We'd love for you to wear these colors<br>to match each celebration's palette</div>
+    <div class="dc-sub fade-in">Please dress to celebrate with us</div>
     <div class="dc-events fade-in">
       <div class="dc-event">
         <div class="dc-event-name">Mehndi</div>
-        <div class="dc-swatches">
-          <div class="dc-swatch-group">
-            <div class="dc-swatch" style="background: #3B3F8C;"></div>
-            <div class="dc-swatch-name">Royal Blue</div>
-          </div>
-          <div class="dc-swatch-group">
-            <div class="dc-swatch" style="background: #6B3FA0;"></div>
-            <div class="dc-swatch-name">Purple</div>
-          </div>
-          <div class="dc-swatch-group">
-            <div class="dc-swatch" style="background: #2E1A47;"></div>
-            <div class="dc-swatch-name">Deep Plum</div>
-          </div>
-        </div>
+        <div class="dc-attire">Formal &nbsp;·&nbsp; Black Tie &nbsp;·&nbsp; Traditional</div>
       </div>
       <div class="ornament"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
       <div class="dc-event">
         <div class="dc-event-name">Shaadi</div>
-        <div class="dc-swatches">
-          <div class="dc-swatch-group">
-            <div class="dc-swatch" style="background: linear-gradient(135deg, #C5A03F, #E8D48A, #C5A03F);"></div>
-            <div class="dc-swatch-name">Gold</div>
-          </div>
-          <div class="dc-swatch-group">
-            <div class="dc-swatch" style="background: #B22234;"></div>
-            <div class="dc-swatch-name">Red</div>
-          </div>
-          <div class="dc-swatch-group">
-            <div class="dc-swatch" style="background: #722F37;"></div>
-            <div class="dc-swatch-name">Burgundy</div>
-          </div>
-        </div>
+        <div class="dc-attire">Formal &nbsp;·&nbsp; Black Tie &nbsp;·&nbsp; Traditional</div>
       </div>
     </div>
   </div>
@@ -961,7 +967,7 @@ function startNamesAnimation() {
 // SCRATCH CARDS
 // ==============================
 let scratchedCount = 0;
-const scratchStates = [false, false, false];
+const scratchStates = [false, false, false, false, false, false];
 
 function initScratchCard(canvasId, index) {
   const canvas = document.getElementById(canvasId);
@@ -999,7 +1005,7 @@ function initScratchCard(canvasId, index) {
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 28, 0, Math.PI * 2);
+    ctx.arc(x, y, 55, 0, Math.PI * 2);
     ctx.fill();
 
     checkScratchProgress(ctx, w, h, index);
@@ -1025,7 +1031,7 @@ function checkScratchProgress(ctx, w, h, index) {
       }
     }
   }
-  if (transparent / total > 0.45) {
+  if (transparent / total > 0.20) {
     scratchStates[index] = true;
     // Clear remaining
     ctx.globalCompositeOperation = 'destination-out';
@@ -1034,7 +1040,7 @@ function checkScratchProgress(ctx, w, h, index) {
     ctx.fill();
 
     scratchedCount++;
-    if (scratchedCount >= 3) {
+    if (scratchedCount >= 6) {
       setTimeout(allScratched, 300);
     }
   }
@@ -1074,6 +1080,9 @@ function fireConfetti() {
 initScratchCard('scratchCanvas1', 0);
 initScratchCard('scratchCanvas2', 1);
 initScratchCard('scratchCanvas3', 2);
+initScratchCard('scratchCanvas4', 3);
+initScratchCard('scratchCanvas5', 4);
+initScratchCard('scratchCanvas6', 5);
 
 // ==============================
 // COUNTDOWN
