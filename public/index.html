@@ -43,12 +43,23 @@
     display: flex; align-items: center; justify-content: center;
     background: #0e1e33;
     overflow: hidden;
+    transition: opacity 0.6s ease;
+  }
+
+  #curtainScreen.fade-out {
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* Ambient glow behind curtains */
   .curtain-glow {
     position: absolute; inset: 0; z-index: 1;
     background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(126,184,224,0.08) 0%, transparent 70%);
+    transition: background 1s ease;
+  }
+
+  #curtainScreen.opening .curtain-glow {
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(245,249,252,0.9) 0%, rgba(234,242,248,0.6) 50%, transparent 80%);
   }
 
   .curtain-left, .curtain-right {
@@ -167,6 +178,11 @@
   .curtain-prompt {
     position: relative; z-index: 7; text-align: center;
     pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+
+  #curtainScreen.opening .curtain-prompt {
+    opacity: 0;
   }
 
   /* Decorative seal/emblem */
@@ -228,7 +244,7 @@
   /* ========== MAIN INVITE ========== */
   #inviteMain {
     height: 100%; overflow-y: auto; overflow-x: hidden;
-    background: var(--cream); display: none;
+    background: var(--cream); display: block;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
@@ -868,23 +884,28 @@ for (let i = 0; i < 20; i++) {
 
 function openCurtains() {
   curtainOpened = true;
+  curtainScreen.classList.add('opening');
   curtainL.classList.add('open');
   curtainR.classList.add('open');
+
+  // Start the names animation while curtains are still parting
+  setTimeout(() => {
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    startNamesAnimation();
+  }, 800);
+
+  // Fade the curtain background away after curtains have parted
+  setTimeout(() => {
+    curtainScreen.classList.add('fade-out');
+  }, 1200);
+
+  // Remove curtain from DOM after fade completes
   setTimeout(() => {
     curtainScreen.style.display = 'none';
-    document.getElementById('inviteMain').style.display = 'block';
-    document.documentElement.style.overflow = 'auto';
-    document.body.style.overflow = 'auto';
-    html_overflow_fix();
-    startNamesAnimation();
-  }, 1000);
-}
-
-function html_overflow_fix() {
-  document.documentElement.style.overflow = '';
-  document.documentElement.style.height = '';
-  document.body.style.overflow = '';
-  document.body.style.height = '';
+  }, 1800);
 }
 
 // ==============================
