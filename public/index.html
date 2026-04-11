@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sarah & Sohab — You're Invited</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1A3A5C;
+    --navy-light: #2A5580;
+    --blue: #7EB8E0;
+    --blue-light: #A8D4F0;
+    --blue-pale: #D0E8F5;
+    --champagne: #B8956A;
+    --champagne-light: #D4B48E;
+    --champagne-dark: #96744E;
+    --cream: #F5F9FC;
+    --bg: #EAF2F8;
+    --white: #FFFFFF;
+    --text: #1A3A5C;
+    --text-light: rgba(26,58,92,0.6);
+    --text-lighter: rgba(26,58,92,0.4);
+    --font-script: 'Great Vibes', cursive;
+    --font-display: 'Playfair Display', serif;
+    --font-serif: 'Cormorant Garamond', serif;
+    --font-sans: 'Outfit', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { overflow: hidden; height: 100%; }
+  body {
+    font-family: var(--font-sans);
+    overflow: hidden;
+    height: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ========== CURTAIN OPENING ========== */
+  #curtainScreen {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    background: #0e1e33;
+    overflow: hidden;
+  }
+
+  /* Ambient glow behind curtains */
+  .curtain-glow {
+    position: absolute; inset: 0; z-index: 1;
+    background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(126,184,224,0.08) 0%, transparent 70%);
+  }
+
+  .curtain-left, .curtain-right {
+    position: absolute; top: 0; bottom: 0; width: 52%;
+    transition: transform 1.4s cubic-bezier(0.7, 0, 0.3, 1);
+    z-index: 3;
+    overflow: hidden;
+  }
+
+  .curtain-left { left: 0; transform-origin: left; }
+  .curtain-right { right: 0; transform-origin: right; }
+
+  .curtain-left.open { transform: translateX(-105%); }
+  .curtain-right.open { transform: translateX(105%); }
+
+  /* Rich fabric base with depth */
+  .curtain-fabric {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #142640 0%, #1A3A5C 15%, #1e4468 40%, #1A3A5C 60%, #152f4a 80%, #0e1e33 100%);
+  }
+
+  /* Fabric fold pattern — vertical drape lines */
+  .curtain-folds {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg,
+      transparent 0px, transparent 12px,
+      rgba(126,184,224,0.04) 13px, rgba(126,184,224,0.04) 14px,
+      transparent 15px, transparent 30px,
+      rgba(0,0,0,0.08) 30px, rgba(0,0,0,0.08) 31px,
+      transparent 32px, transparent 50px,
+      rgba(126,184,224,0.02) 50px, rgba(126,184,224,0.02) 51px,
+      transparent 52px, transparent 70px
+    );
+  }
+
+  /* Satin sheen highlight */
+  .curtain-left .curtain-sheen {
+    position: absolute; top: 0; bottom: 0; right: 0; width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(126,184,224,0.06) 60%, rgba(168,212,240,0.03));
+  }
+
+  .curtain-right .curtain-sheen {
+    position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
+    background: linear-gradient(270deg, transparent, rgba(126,184,224,0.06) 60%, rgba(168,212,240,0.03));
+  }
+
+  /* Gold trim along inner edge */
+  .curtain-left .curtain-trim {
+    position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
+    background: linear-gradient(180deg, var(--champagne-light), var(--champagne), var(--champagne-dark), var(--champagne), var(--champagne-light));
+    opacity: 0.4;
+  }
+
+  .curtain-right .curtain-trim {
+    position: absolute; top: 0; bottom: 0; left: 0; width: 3px;
+    background: linear-gradient(180deg, var(--champagne-light), var(--champagne), var(--champagne-dark), var(--champagne), var(--champagne-light));
+    opacity: 0.4;
+  }
+
+  /* Valance (draped top piece) */
+  .curtain-valance {
+    position: absolute; top: 0; left: 0; right: 0; height: 80px; z-index: 5;
+    background: linear-gradient(180deg, #0e1e33 0%, #142640 40%, transparent 100%);
+  }
+
+  .curtain-valance::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent 10%, rgba(184,149,106,0.2) 30%, rgba(184,149,106,0.3) 50%, rgba(184,149,106,0.2) 70%, transparent 90%);
+  }
+
+  /* Tassel decorations */
+  .curtain-tassel {
+    position: absolute; z-index: 6; width: 20px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .tassel-rope {
+    width: 2px; height: 40px;
+    background: linear-gradient(180deg, var(--champagne), var(--champagne-dark));
+    opacity: 0.5;
+  }
+
+  .tassel-knot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, var(--champagne-light), var(--champagne-dark));
+    opacity: 0.5;
+  }
+
+  .tassel-fringe {
+    width: 14px; height: 28px;
+    background: repeating-linear-gradient(90deg,
+      var(--champagne-dark) 0px, var(--champagne-dark) 1px,
+      transparent 1px, transparent 3px
+    );
+    opacity: 0.35;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .tassel-left { left: 46%; top: 60px; }
+  .tassel-right { right: 46%; top: 60px; }
+
+  /* Sparkle particles on curtain */
+  .sparkle {
+    position: absolute; z-index: 4;
+    width: 3px; height: 3px; border-radius: 50%;
+    background: rgba(168,212,240,0.6);
+    animation: sparkleFloat 3s infinite;
+  }
+
+  @keyframes sparkleFloat {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  .curtain-prompt {
+    position: relative; z-index: 7; text-align: center;
+    pointer-events: none;
+  }
+
+  /* Decorative seal/emblem */
+  .curtain-seal {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 1.5px solid rgba(184,149,106,0.3);
+    margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    opacity: 0; animation: fadeIn 0.8s 0.3s forwards;
+  }
+
+  .curtain-seal::before {
+    content: ''; position: absolute; inset: 5px;
+    border-radius: 50%; border: 1px solid rgba(184,149,106,0.15);
+  }
+
+  .curtain-seal-text {
+    font-family: var(--font-script); font-size: 32px;
+    color: var(--champagne-light); opacity: 0.8;
+    line-height: 1;
+  }
+
+  .curtain-monogram {
+    font-family: var(--font-script); font-size: 56px; color: var(--blue-light);
+    opacity: 0; animation: fadeIn 1s 0.6s forwards;
+    line-height: 1;
+  }
+
+  .curtain-text {
+    font-family: var(--font-serif); font-size: 16px; font-weight: 300;
+    color: rgba(168,212,240,0.5); letter-spacing: 5px; text-transform: uppercase;
+    margin-top: 16px; opacity: 0; animation: fadeIn 1s 0.9s forwards;
+  }
+
+  .curtain-date-hint {
+    font-family: var(--font-serif); font-size: 14px; font-weight: 300;
+    font-style: italic; color: rgba(184,149,106,0.4);
+    margin-top: 8px; opacity: 0; animation: fadeIn 1s 1.1s forwards;
+  }
+
+  .curtain-swipe {
+    font-size: 11px; font-weight: 300; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--blue);
+    margin-top: 36px; opacity: 0; animation: fadeIn 1s 1.4s forwards, pulse 2s 2.5s infinite;
+  }
+
+  .curtain-swipe-arrows {
+    display: flex; justify-content: center; gap: 24px;
+    margin-bottom: 6px; font-size: 16px; opacity: 0.6;
+  }
+
+  .curtain-swipe-arrows span:first-child { animation: swipeLeft 1.5s 2.5s infinite; }
+  .curtain-swipe-arrows span:last-child { animation: swipeRight 1.5s 2.5s infinite; }
+
+  @keyframes swipeLeft { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-6px); } }
+  @keyframes swipeRight { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+
+  /* ========== MAIN INVITE ========== */
+  #inviteMain {
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    background: var(--cream); display: none;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .invite-section {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 60px 28px; position: relative; text-align: center;
+  }
+
+  /* ========== SECTION 1: NAMES ========== */
+  .sec-names {
+    background: var(--white);
+    position: relative;
+  }
+
+  .sec-names::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 500px 400px at 50% 40%, rgba(126,184,224,0.05) 0%, transparent 70%);
+  }
+
+  .names-prelude {
+    font-family: var(--font-sans); font-size: 10px; font-weight: 300;
+    letter-spacing: 6px; text-transform: uppercase; color: var(--champagne);
+    margin-bottom: 8px; opacity: 0;
+  }
+
+  .names-prelude2 {
+    font-family: var(--font-serif); font-size: 17px; font-weight: 300;
+    color: var(--text-light); line-height: 2; margin-bottom: 28px; opacity: 0;
+  }
+
+  .names-svg { overflow: visible; position: relative; z-index: 2; }
+  .draw-text { fill: transparent; stroke: var(--navy); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; font-family: var(--font-script); }
+  .draw-text.amp { stroke: var(--blue); stroke-width: 1.2; }
+  .fill-text { fill: var(--navy); stroke: none; opacity: 0; font-family: var(--font-script); transition: opacity 1.2s ease; }
+  .fill-text.amp { fill: var(--blue); }
+  .fill-text.visible { opacity: 1; }
+
+  .names-post {
+    font-family: var(--font-serif); font-size: 18px; font-weight: 300;
+    color: var(--text-light); margin-top: 24px; line-height: 1.8; opacity: 0;
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; font-weight: 300; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--blue); opacity: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+
+  .scroll-hint-line {
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, var(--blue), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* ========== SECTION 2: SCRATCH TO REVEAL ========== */
+  .sec-scratch {
+    background: var(--cream);
+    min-height: 100vh;
+  }
+
+  .scratch-label {
+    font-family: var(--font-script); font-size: 36px; color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .scratch-sublabel {
+    font-size: 11px; font-weight: 300; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--champagne); margin-bottom: 40px;
+  }
+
+  .scratch-circles {
+    display: flex; gap: 20px; justify-content: center; margin-bottom: 24px;
+  }
+
+  .scratch-card {
+    width: 100px; height: 100px; border-radius: 50%;
+    position: relative; cursor: pointer; overflow: hidden;
+    touch-action: none;
+  }
+
+  .scratch-card canvas {
+    position: absolute; inset: 0; border-radius: 50%;
+    z-index: 2; cursor: pointer; touch-action: none;
+  }
+
+  .scratch-value {
+    position: absolute; inset: 0; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    font-family: var(--font-display); z-index: 1;
+    background: var(--white); border-radius: 50%;
+    border: 1px solid rgba(126,184,224,0.2);
+  }
+
+  .scratch-value .num {
+    font-size: 32px; font-weight: 400; color: var(--navy); line-height: 1;
+  }
+
+  .scratch-value .label {
+    font-family: var(--font-sans); font-size: 10px; font-weight: 300;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--blue);
+    margin-top: 4px;
+  }
+
+  .scratch-hint {
+    font-family: var(--font-sans); font-size: 11px; font-weight: 300;
+    color: var(--text-lighter); letter-spacing: 2px;
+  }
+
+  .scratch-revealed-text {
+    font-family: var(--font-script); font-size: 28px; color: var(--champagne);
+    margin-top: 24px; opacity: 0; transition: opacity 0.6s;
+  }
+
+  .scratch-revealed-text.visible { opacity: 1; }
+
+  /* Confetti */
+  .confetti-container {
+    position: fixed; inset: 0; pointer-events: none; z-index: 300;
+  }
+
+  .confetti {
+    position: absolute; width: 8px; height: 8px;
+    opacity: 0; border-radius: 1px;
+  }
+
+  /* ========== SECTION 3: COUNTDOWN ========== */
+  .sec-countdown {
+    background: var(--white);
+    min-height: 80vh;
+  }
+
+  .cd-title {
+    font-family: var(--font-script); font-size: 36px; color: var(--navy);
+    margin-bottom: 32px;
+  }
+
+  .cd-grid {
+    display: flex; gap: 12px; justify-content: center; margin-bottom: 16px;
+  }
+
+  .cd-box {
+    width: 72px; height: 80px;
+    border: 1px solid rgba(126,184,224,0.25);
+    border-radius: 8px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--cream);
+  }
+
+  .cd-num {
+    font-family: var(--font-display); font-size: 28px; font-weight: 400;
+    color: var(--navy); line-height: 1;
+  }
+
+  .cd-label {
+    font-size: 9px; font-weight: 300; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--blue); margin-top: 4px;
+  }
+
+  .cd-until {
+    font-family: var(--font-serif); font-size: 15px; font-weight: 300;
+    font-style: italic; color: var(--text-lighter); margin-top: 8px;
+  }
+
+  /* ========== SECTION 4: EVENTS ========== */
+  .sec-events {
+    background: var(--cream);
+    min-height: auto;
+    padding: 80px 28px;
+  }
+
+  .event-block {
+    width: 100%; max-width: 380px;
+    border: 1px solid rgba(126,184,224,0.2);
+    border-radius: 4px;
+    padding: 40px 28px;
+    margin: 0 auto 40px;
+    background: var(--white);
+    position: relative;
+  }
+
+  .event-block::before {
+    content: ''; position: absolute; top: -1px; left: 50%;
+    transform: translateX(-50%); width: 40px; height: 3px; background: var(--blue);
+  }
+
+  .event-block-title {
+    font-family: var(--font-display); font-size: 26px; font-weight: 400;
+    color: var(--navy); margin-bottom: 4px;
+  }
+
+  .event-block-sub {
+    font-family: var(--font-serif); font-size: 15px; font-style: italic;
+    font-weight: 300; color: var(--blue); margin-bottom: 24px;
+  }
+
+  .event-detail-row {
+    margin-bottom: 16px; text-align: center;
+  }
+
+  .event-detail-row .label {
+    font-size: 10px; font-weight: 400; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--champagne); margin-bottom: 2px;
+  }
+
+  .event-detail-row .value {
+    font-family: var(--font-serif); font-size: 17px; font-weight: 400;
+    color: var(--navy);
+  }
+
+  .event-detail-row .value.italic { font-style: italic; }
+
+  .add-to-cal {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 20px; padding: 10px 24px;
+    border: 1px solid rgba(126,184,224,0.25);
+    background: transparent; color: var(--blue); cursor: pointer;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 300;
+    letter-spacing: 2px; text-transform: uppercase;
+    transition: all 0.3s; border-radius: 4px; text-decoration: none;
+  }
+
+  .add-to-cal:hover { background: rgba(126,184,224,0.06); }
+
+  .cal-icon {
+    width: 14px; height: 14px; stroke: var(--blue); fill: none;
+    stroke-width: 1.5;
+  }
+
+  .events-divider {
+    width: 60px; height: 1px; background: var(--blue-pale);
+    margin: 0 auto 40px;
+  }
+
+  /* ========== SECTION 5: DRESS CODE ========== */
+  .sec-dresscode {
+    background: var(--white);
+    min-height: 80vh;
+  }
+
+  .dc-title {
+    font-family: var(--font-script); font-size: 36px; color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .dc-sub {
+    font-family: var(--font-serif); font-size: 15px; font-weight: 300;
+    color: var(--text-light); margin-bottom: 36px; line-height: 1.6;
+  }
+
+  .dc-events {
+    display: flex; flex-direction: column; gap: 28px;
+    max-width: 340px; width: 100%;
+  }
+
+  .dc-event {
+    text-align: center;
+  }
+
+  .dc-event-name {
+    font-family: var(--font-display); font-size: 18px; font-weight: 400;
+    color: var(--navy); margin-bottom: 12px;
+  }
+
+  .dc-swatches {
+    display: flex; justify-content: center; gap: 16px;
+  }
+
+  .dc-swatch-group { text-align: center; }
+
+  .dc-swatch {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid rgba(26,58,92,0.08);
+    margin: 0 auto 6px;
+    transition: transform 0.3s;
+  }
+
+  .dc-swatch:hover { transform: scale(1.1); }
+
+  .dc-swatch-name {
+    font-size: 10px; font-weight: 300; letter-spacing: 1px;
+    color: var(--text-lighter); text-transform: uppercase;
+  }
+
+  /* ========== SECTION 6: RSVP ========== */
+  .sec-rsvp {
+    background: var(--cream);
+    min-height: 90vh;
+  }
+
+  .rsvp-title {
+    font-family: var(--font-script); font-size: 42px; color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .rsvp-text {
+    font-family: var(--font-serif); font-size: 16px; font-weight: 300;
+    color: var(--text-light); line-height: 1.8; margin-bottom: 36px;
+    max-width: 320px;
+  }
+
+  .rsvp-btn {
+    background: var(--navy); color: var(--white); border: none;
+    padding: 18px 48px; font-family: var(--font-sans);
+    font-size: 12px; font-weight: 500; letter-spacing: 4px;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.3s; border-radius: 2px;
+  }
+
+  .rsvp-btn:hover {
+    background: var(--navy-light); transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26,58,92,0.15);
+  }
+
+  .rsvp-deadline {
+    font-size: 11px; font-weight: 300; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--text-lighter); margin-top: 20px;
+  }
+
+  /* ========== SECTION 7: FOOTER ========== */
+  .sec-footer {
+    background: var(--white);
+    min-height: 60vh;
+    padding: 60px 28px;
+  }
+
+  .footer-ayah {
+    font-family: var(--font-serif); font-size: 17px; font-style: italic;
+    font-weight: 300; color: var(--champagne); opacity: 0.8;
+    max-width: 400px; line-height: 1.9; margin-bottom: 8px;
+  }
+
+  .footer-ayah-ref {
+    font-size: 13px; color: var(--text-lighter); font-style: normal;
+    display: block; margin-top: 4px;
+  }
+
+  .footer-monogram {
+    font-family: var(--font-script); font-size: 48px; color: var(--blue);
+    margin-top: 32px;
+  }
+
+  .footer-website {
+    font-size: 12px; font-weight: 300; letter-spacing: 3px;
+    color: var(--text-lighter); margin-top: 8px; text-transform: lowercase;
+  }
+
+  .footer-hearts {
+    margin-top: 24px; font-size: 11px; color: var(--blue-pale);
+    letter-spacing: 8px;
+  }
+
+  /* ========== ORNAMENTS ========== */
+  .ornament {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px; margin: 32px 0;
+  }
+
+  .orn-line { width: 50px; height: 1px; background: var(--blue-pale); }
+  .orn-diamond { width: 7px; height: 7px; border: 1px solid var(--blue); transform: rotate(45deg); }
+
+  /* ========== WAVY BORDER FRAME ========== */
+  .wavy-frame {
+    position: relative; padding: 20px;
+  }
+
+  .wavy-frame svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes scrollPulse { 0%,100% { opacity: 0.3; transform: scaleY(1); } 50% { opacity: 0.8; transform: scaleY(1.2); } }
+  @keyframes swipeHint { 0%,100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+
+
+  @keyframes confettiFall {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
+  }
+
+  .fade-in { opacity: 0; transition: opacity 0.8s, transform 0.8s cubic-bezier(0.16,1,0.3,1); transform: translateY(24px); }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ========== MOBILE ========== */
+  @media (max-width: 420px) {
+    .scratch-card { width: 85px; height: 85px; }
+    .scratch-circles { gap: 14px; }
+    .cd-box { width: 64px; height: 72px; }
+    .cd-num { font-size: 24px; }
+    .names-svg { width: 95% !important; height: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== CURTAIN SCREEN ===== -->
+<div id="curtainScreen">
+  <div class="curtain-glow"></div>
+
+  <div class="curtain-left" id="curtainL">
+    <div class="curtain-fabric"></div>
+    <div class="curtain-folds"></div>
+    <div class="curtain-sheen"></div>
+    <div class="curtain-trim"></div>
+  </div>
+  <div class="curtain-right" id="curtainR">
+    <div class="curtain-fabric"></div>
+    <div class="curtain-folds"></div>
+    <div class="curtain-sheen"></div>
+    <div class="curtain-trim"></div>
+  </div>
+
+  <div class="curtain-valance"></div>
+
+  <div class="curtain-tassel tassel-left">
+    <div class="tassel-rope"></div>
+    <div class="tassel-knot"></div>
+    <div class="tassel-fringe"></div>
+  </div>
+  <div class="curtain-tassel tassel-right">
+    <div class="tassel-rope"></div>
+    <div class="tassel-knot"></div>
+    <div class="tassel-fringe"></div>
+  </div>
+
+  <div class="curtain-prompt">
+    <div class="curtain-seal">
+      <div class="curtain-seal-text">S&S</div>
+    </div>
+    <div class="curtain-monogram">Sarah & Sohab</div>
+    <div class="curtain-text">You are invited</div>
+    <div class="curtain-date-hint">Memorial Day Weekend 2027</div>
+    <div class="curtain-swipe">
+      <div class="curtain-swipe-arrows"><span>←</span><span>→</span></div>
+      Swipe to open
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN INVITE ===== -->
+<div id="inviteMain">
+
+  <!-- SEC 1: NAMES -->
+  <div class="invite-section sec-names" id="secNames">
+    <div class="names-prelude" id="prelude1">A celebration of love</div>
+    <div class="names-prelude2" id="prelude2">Together with their families<br>and with the blessings of Allah</div>
+    <svg class="names-svg" viewBox="0 0 500 240" width="500" height="240">
+      <text id="sarahStroke" class="draw-text" x="250" y="80" font-size="76" text-anchor="middle">Sarah</text>
+      <text id="sarahFill" class="fill-text" x="250" y="80" font-size="76" text-anchor="middle">Sarah</text>
+      <text id="ampStroke" class="draw-text amp" x="250" y="130" font-size="40" text-anchor="middle">&</text>
+      <text id="ampFill" class="fill-text amp" x="250" y="130" font-size="40" text-anchor="middle">&</text>
+      <text id="sohabStroke" class="draw-text" x="250" y="205" font-size="76" text-anchor="middle">Sohab</text>
+      <text id="sohabFill" class="fill-text" x="250" y="205" font-size="76" text-anchor="middle">Sohab</text>
+    </svg>
+    <div class="names-post" id="namesPost">invite you to celebrate their wedding</div>
+    <div class="scroll-hint" id="scrollHint">
+      <span>Scroll</span>
+      <div class="scroll-hint-line"></div>
+    </div>
+  </div>
+
+  <!-- SEC 2: SCRATCH TO REVEAL -->
+  <div class="invite-section sec-scratch" id="secScratch">
+    <div class="scratch-label fade-in">Reveal</div>
+    <div class="scratch-sublabel fade-in">Scratch to discover the date</div>
+    <div class="scratch-circles">
+      <div class="scratch-card" id="scratch1">
+        <canvas id="scratchCanvas1" width="200" height="200"></canvas>
+        <div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div>
+      </div>
+      <div class="scratch-card" id="scratch2">
+        <canvas id="scratchCanvas2" width="200" height="200"></canvas>
+        <div class="scratch-value"><span class="num">28</span><span class="label">Day</span></div>
+      </div>
+      <div class="scratch-card" id="scratch3">
+        <canvas id="scratchCanvas3" width="200" height="200"></canvas>
+        <div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div>
+      </div>
+    </div>
+    <div class="scratch-hint" id="scratchHint">Scratch all three to continue</div>
+    <div class="scratch-revealed-text" id="scratchReveal">We're getting married!</div>
+  </div>
+
+  <!-- SEC 3: COUNTDOWN -->
+  <div class="invite-section sec-countdown" id="secCountdown">
+    <div class="cd-title fade-in">Countdown</div>
+    <div class="cd-grid fade-in">
+      <div class="cd-box"><div class="cd-num" id="cdDays">--</div><div class="cd-label">Days</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdHrs">--</div><div class="cd-label">Hours</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdMin">--</div><div class="cd-label">Min</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdSec">--</div><div class="cd-label">Sec</div></div>
+    </div>
+    <div class="cd-until fade-in">until the celebrations begin</div>
+  </div>
+
+  <!-- SEC 4: EVENTS -->
+  <div class="invite-section sec-events" id="secEvents">
+    <div class="ornament fade-in"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
+
+    <div class="event-block fade-in">
+      <div class="event-block-title">Mehndi</div>
+      <div class="event-block-sub">An evening of color, henna & celebration</div>
+      <div class="event-detail-row"><div class="label">Date</div><div class="value">Friday, May 28th, 2027</div></div>
+      <div class="event-detail-row"><div class="label">Time</div><div class="value">6:00 PM</div></div>
+      <div class="event-detail-row"><div class="label">Venue</div><div class="value italic">To be announced</div></div>
+      <div class="event-detail-row"><div class="label">Location</div><div class="value">Northern Virginia</div></div>
+      <a class="add-to-cal" href="#" onclick="addToCalendar('Mehndi','2027-05-28T18:00:00','2027-05-28T23:00:00','Northern Virginia'); return false;">
+        <svg class="cal-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Add to Calendar
+      </a>
+    </div>
+
+    <div class="events-divider"></div>
+
+    <div class="event-block fade-in">
+      <div class="event-block-title">Shaadi</div>
+      <div class="event-block-sub">Baraat, ceremony & Ruksati</div>
+      <div class="event-detail-row"><div class="label">Date</div><div class="value">Saturday, May 29th, 2027</div></div>
+      <div class="event-detail-row"><div class="label">Time</div><div class="value">5:00 PM</div></div>
+      <div class="event-detail-row"><div class="label">Venue</div><div class="value italic">The Bellevue Conference & Event Center</div></div>
+      <div class="event-detail-row"><div class="label">Location</div><div class="value">43350 John Mosby Hwy<br>Chantilly, VA 20152</div></div>
+      <a class="add-to-cal" href="#" onclick="addToCalendar('Shaadi - Sarah & Sohab','2027-05-29T17:00:00','2027-05-30T00:00:00','The Bellevue, 43350 John Mosby Hwy, Chantilly VA 20152'); return false;">
+        <svg class="cal-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Add to Calendar
+      </a>
+    </div>
+
+    <div class="ornament fade-in"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
+  </div>
+
+  <!-- SEC 5: DRESS CODE -->
+  <div class="invite-section sec-dresscode" id="secDress">
+    <div class="dc-title fade-in">Dress Code</div>
+    <div class="dc-sub fade-in">We'd love for you to wear these colors<br>to match each celebration's palette</div>
+    <div class="dc-events fade-in">
+      <div class="dc-event">
+        <div class="dc-event-name">Mehndi</div>
+        <div class="dc-swatches">
+          <div class="dc-swatch-group">
+            <div class="dc-swatch" style="background: #3B3F8C;"></div>
+            <div class="dc-swatch-name">Royal Blue</div>
+          </div>
+          <div class="dc-swatch-group">
+            <div class="dc-swatch" style="background: #6B3FA0;"></div>
+            <div class="dc-swatch-name">Purple</div>
+          </div>
+          <div class="dc-swatch-group">
+            <div class="dc-swatch" style="background: #2E1A47;"></div>
+            <div class="dc-swatch-name">Deep Plum</div>
+          </div>
+        </div>
+      </div>
+      <div class="ornament"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
+      <div class="dc-event">
+        <div class="dc-event-name">Shaadi</div>
+        <div class="dc-swatches">
+          <div class="dc-swatch-group">
+            <div class="dc-swatch" style="background: linear-gradient(135deg, #C5A03F, #E8D48A, #C5A03F);"></div>
+            <div class="dc-swatch-name">Gold</div>
+          </div>
+          <div class="dc-swatch-group">
+            <div class="dc-swatch" style="background: #B22234;"></div>
+            <div class="dc-swatch-name">Red</div>
+          </div>
+          <div class="dc-swatch-group">
+            <div class="dc-swatch" style="background: #722F37;"></div>
+            <div class="dc-swatch-name">Burgundy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEC 6: RSVP -->
+  <div class="invite-section sec-rsvp" id="secRSVP">
+    <div class="rsvp-title fade-in">Kindly Respond</div>
+    <div class="rsvp-text fade-in">We would be honored by your presence. Please let us know if you can join us for these celebrations.</div>
+    <button class="rsvp-btn fade-in">RSVP Now</button>
+    <div class="rsvp-deadline fade-in">Kindly respond by April 15, 2027</div>
+  </div>
+
+  <!-- SEC 7: FOOTER -->
+  <div class="invite-section sec-footer" id="secFooter">
+    <div class="footer-ayah fade-in">
+      "And among His signs is that He created for you mates from among yourselves,
+      that you may dwell in tranquility with them, and He has put love and mercy between your hearts."
+      <span class="footer-ayah-ref">— Quran 30:21</span>
+    </div>
+    <div class="footer-monogram fade-in">Sarah & Sohab</div>
+    <div class="footer-website fade-in">sarahandsohab.com</div>
+    <div class="footer-hearts fade-in">♦ ♦ ♦</div>
+  </div>
+
+</div>
+
+<div class="confetti-container" id="confettiBox"></div>
+
+<script>
+// ==============================
+// CURTAIN
+// ==============================
+const curtainScreen = document.getElementById('curtainScreen');
+const curtainL = document.getElementById('curtainL');
+const curtainR = document.getElementById('curtainR');
+let curtainOpened = false;
+let cStartX = 0;
+
+curtainScreen.addEventListener('pointerdown', e => { cStartX = e.clientX; });
+curtainScreen.addEventListener('pointerup', e => {
+  if (curtainOpened) return;
+  const dx = Math.abs(e.clientX - cStartX);
+  if (dx > 30 || e.pointerType === 'touch') {
+    openCurtains();
+  }
+});
+curtainScreen.addEventListener('click', () => {
+  if (!curtainOpened) openCurtains();
+});
+
+// Generate sparkles on curtain
+for (let i = 0; i < 20; i++) {
+  const s = document.createElement('div');
+  s.className = 'sparkle';
+  s.style.left = Math.random() * 100 + '%';
+  s.style.top = Math.random() * 100 + '%';
+  s.style.animationDelay = (Math.random() * 3) + 's';
+  s.style.animationDuration = (2 + Math.random() * 2) + 's';
+  curtainScreen.appendChild(s);
+}
+
+function openCurtains() {
+  curtainOpened = true;
+  curtainL.classList.add('open');
+  curtainR.classList.add('open');
+  setTimeout(() => {
+    curtainScreen.style.display = 'none';
+    document.getElementById('inviteMain').style.display = 'block';
+    document.documentElement.style.overflow = 'auto';
+    document.body.style.overflow = 'auto';
+    html_overflow_fix();
+    startNamesAnimation();
+  }, 1000);
+}
+
+function html_overflow_fix() {
+  document.documentElement.style.overflow = '';
+  document.documentElement.style.height = '';
+  document.body.style.overflow = '';
+  document.body.style.height = '';
+}
+
+// ==============================
+// CALLIGRAPHY
+// ==============================
+document.fonts.ready.then(() => {
+  ['sarahStroke','ampStroke','sohabStroke'].forEach(id => {
+    const el = document.getElementById(id);
+    const len = el.getComputedTextLength() * 3.5;
+    el.style.strokeDasharray = len;
+    el.style.strokeDashoffset = len;
+    el.dataset.pathLen = len;
+  });
+});
+
+function startNamesAnimation() {
+  setTimeout(() => {
+    document.getElementById('prelude1').style.animation = 'fadeUp 0.8s forwards';
+  }, 200);
+  setTimeout(() => {
+    document.getElementById('prelude2').style.animation = 'fadeUp 0.8s forwards';
+  }, 600);
+
+  const items = [
+    { stroke:'sarahStroke', fill:'sarahFill', drawTime:2200, fillDelay:2000 },
+    { stroke:'ampStroke', fill:'ampFill', drawTime:1000, fillDelay:800 },
+    { stroke:'sohabStroke', fill:'sohabFill', drawTime:2200, fillDelay:2000 },
+  ];
+
+  let d = 1200;
+  items.forEach(item => {
+    const s = document.getElementById(item.stroke), f = document.getElementById(item.fill);
+    setTimeout(() => {
+      s.style.transition = `stroke-dashoffset ${item.drawTime}ms cubic-bezier(0.25,0.1,0.25,1)`;
+      s.style.strokeDashoffset = '0';
+    }, d);
+    setTimeout(() => {
+      f.classList.add('visible');
+      setTimeout(() => { s.style.transition = 'opacity 0.8s'; s.style.opacity = '0'; }, 500);
+    }, d + item.fillDelay);
+    d += item.drawTime + 200;
+  });
+
+  setTimeout(() => {
+    document.getElementById('namesPost').style.animation = 'fadeUp 0.8s forwards';
+  }, d + 200);
+  setTimeout(() => {
+    document.getElementById('scrollHint').style.animation = 'fadeIn 0.8s forwards';
+  }, d + 600);
+}
+
+// ==============================
+// SCRATCH CARDS
+// ==============================
+let scratchedCount = 0;
+const scratchStates = [false, false, false];
+
+function initScratchCard(canvasId, index) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  // Draw gold cover
+  const gradient = ctx.createRadialGradient(w/2, h/2, 20, w/2, h/2, w/2);
+  gradient.addColorStop(0, '#D4B48E');
+  gradient.addColorStop(0.5, '#B8956A');
+  gradient.addColorStop(1, '#96744E');
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(w/2, h/2, w/2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Add subtle shine
+  const shine = ctx.createRadialGradient(w*0.35, h*0.35, 5, w/2, h/2, w/2);
+  shine.addColorStop(0, 'rgba(255,255,255,0.2)');
+  shine.addColorStop(1, 'transparent');
+  ctx.fillStyle = shine;
+  ctx.beginPath();
+  ctx.arc(w/2, h/2, w/2, 0, Math.PI * 2);
+  ctx.fill();
+
+  let isScratching = false;
+
+  function scratch(e) {
+    if (scratchStates[index]) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = w / rect.width;
+    const scaleY = h / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 28, 0, Math.PI * 2);
+    ctx.fill();
+
+    checkScratchProgress(ctx, w, h, index);
+  }
+
+  canvas.addEventListener('pointerdown', e => { isScratching = true; scratch(e); });
+  canvas.addEventListener('pointermove', e => { if (isScratching) scratch(e); });
+  canvas.addEventListener('pointerup', () => { isScratching = false; });
+  canvas.addEventListener('pointerleave', () => { isScratching = false; });
+}
+
+function checkScratchProgress(ctx, w, h, index) {
+  if (scratchStates[index]) return;
+  const data = ctx.getImageData(0, 0, w, h).data;
+  let transparent = 0, total = 0;
+  // Sample center circle area
+  for (let y = 0; y < h; y += 4) {
+    for (let x = 0; x < w; x += 4) {
+      const dx = x - w/2, dy = y - h/2;
+      if (dx*dx + dy*dy < (w/2)*(w/2)) {
+        total++;
+        if (data[(y * w + x) * 4 + 3] < 128) transparent++;
+      }
+    }
+  }
+  if (transparent / total > 0.45) {
+    scratchStates[index] = true;
+    // Clear remaining
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, w/2, 0, Math.PI * 2);
+    ctx.fill();
+
+    scratchedCount++;
+    if (scratchedCount >= 3) {
+      setTimeout(allScratched, 300);
+    }
+  }
+}
+
+function allScratched() {
+  document.getElementById('scratchReveal').classList.add('visible');
+  document.getElementById('scratchHint').textContent = '';
+  fireConfetti();
+}
+
+function fireConfetti() {
+  const box = document.getElementById('confettiBox');
+  const colors = ['#7EB8E0','#A8D4F0','#B8956A','#D4B48E','#1A3A5C','#D0E8F5'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    const size = 5 + Math.random() * 8;
+    const x = 20 + Math.random() * 60;
+    const tx = (Math.random() - 0.5) * 200;
+    const ty = 300 + Math.random() * 400;
+    const rot = (Math.random() - 0.5) * 720;
+    const delay = Math.random() * 0.3;
+    c.style.cssText = `
+      left:${x}%;top:-10px;width:${size}px;height:${size * (0.5 + Math.random())}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      --tx:${tx}px;--ty:${ty}px;--rot:${rot}deg;
+      animation:confettiFall ${1.5 + Math.random()}s ${delay}s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+      border-radius:${Math.random()>0.5?'50%':'1px'};
+    `;
+    box.appendChild(c);
+  }
+  setTimeout(() => { box.innerHTML = ''; }, 3000);
+}
+
+// Init scratch cards
+initScratchCard('scratchCanvas1', 0);
+initScratchCard('scratchCanvas2', 1);
+initScratchCard('scratchCanvas3', 2);
+
+// ==============================
+// COUNTDOWN
+// ==============================
+function updateCD() {
+  const target = new Date('2027-05-28T18:00:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) return;
+  document.getElementById('cdDays').textContent = Math.floor(diff / 864e5);
+  document.getElementById('cdHrs').textContent = String(Math.floor((diff/36e5)%24)).padStart(2,'0');
+  document.getElementById('cdMin').textContent = String(Math.floor((diff/6e4)%60)).padStart(2,'0');
+  document.getElementById('cdSec').textContent = String(Math.floor((diff/1e3)%60)).padStart(2,'0');
+}
+updateCD(); setInterval(updateCD, 1000);
+
+// ==============================
+// SCROLL REVEAL
+// ==============================
+const fadeEls = document.querySelectorAll('.fade-in');
+const obsv = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.2 });
+fadeEls.forEach(el => obsv.observe(el));
+
+// ==============================
+// ADD TO CALENDAR
+// ==============================
+function addToCalendar(title, start, end, location) {
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start.replace(/[-:]/g,'')}/${end.replace(/[-:]/g,'')}&location=${encodeURIComponent(location)}&details=${encodeURIComponent('Sarah & Sohab Wedding Celebration')}`;
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>
