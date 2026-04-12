@@ -152,7 +152,9 @@
   .sec-scratch { background: var(--cream); min-height: 100vh; }
   .scratch-label { font-family: var(--font-script); font-size: 36px; color: var(--navy); margin-bottom: 4px; }
   .scratch-sublabel { font-size: 11px; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; color: var(--champagne); margin-bottom: 40px; }
-  .scratch-circles { display: flex; gap: 20px; justify-content: center; margin-bottom: 24px; }
+  .scratch-rows { display: flex; flex-direction: column; gap: 20px; align-items: center; margin-bottom: 24px; }
+  .scratch-event-label { font-family: var(--font-display); font-size: 12px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--navy); opacity: 0.6; margin-bottom: 10px; }
+  .scratch-circles { display: flex; gap: 20px; justify-content: center; }
   .scratch-card { width: 100px; height: 100px; border-radius: 50%; position: relative; cursor: pointer; overflow: hidden; touch-action: none; }
   .scratch-card canvas { position: absolute; inset: 0; border-radius: 50%; z-index: 2; cursor: pointer; touch-action: none; }
   .scratch-value { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); z-index: 1; background: var(--white); border-radius: 50%; border: 1px solid rgba(126,184,224,0.2); }
@@ -188,6 +190,7 @@
   .dc-swatches { display: flex; justify-content: center; gap: 16px; }
   .dc-swatch { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(26,58,92,0.08); margin: 0 auto 6px; }
   .dc-swatch-name { font-size: 10px; font-weight: 300; letter-spacing: 1px; color: var(--text-lighter); text-transform: uppercase; }
+  .dc-attire { font-family: var(--font-serif); font-size: 14px; font-weight: 300; color: var(--text-light); letter-spacing: 1px; }
   .sec-rsvp { background: var(--cream); min-height: 90vh; }
   .rsvp-title { font-family: var(--font-script); font-size: 42px; color: var(--navy); margin-bottom: 12px; }
   .rsvp-text { font-family: var(--font-serif); font-size: 16px; font-weight: 300; color: var(--text-light); line-height: 1.8; margin-bottom: 36px; max-width: 320px; }
@@ -265,13 +268,26 @@
 
   <div class="invite-section sec-scratch">
     <div class="scratch-label fade-in">Reveal</div>
-    <div class="scratch-sublabel fade-in">Scratch to discover the date</div>
-    <div class="scratch-circles">
-      <div class="scratch-card"><canvas id="sc1" width="200" height="200"></canvas><div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div></div>
-      <div class="scratch-card"><canvas id="sc2" width="200" height="200"></canvas><div class="scratch-value"><span class="num">28</span><span class="label">Day</span></div></div>
-      <div class="scratch-card"><canvas id="sc3" width="200" height="200"></canvas><div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div></div>
+    <div class="scratch-sublabel fade-in">Scratch to discover the dates</div>
+    <div class="scratch-rows">
+      <div>
+        <div class="scratch-event-label">Mehndi</div>
+        <div class="scratch-circles">
+          <div class="scratch-card"><canvas id="sc1" width="200" height="200"></canvas><div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div></div>
+          <div class="scratch-card"><canvas id="sc2" width="200" height="200"></canvas><div class="scratch-value"><span class="num">28</span><span class="label">Day</span></div></div>
+          <div class="scratch-card"><canvas id="sc3" width="200" height="200"></canvas><div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="scratch-event-label">Shaadi</div>
+        <div class="scratch-circles">
+          <div class="scratch-card"><canvas id="sc4" width="200" height="200"></canvas><div class="scratch-value"><span class="num">May</span><span class="label">Month</span></div></div>
+          <div class="scratch-card"><canvas id="sc5" width="200" height="200"></canvas><div class="scratch-value"><span class="num">29</span><span class="label">Day</span></div></div>
+          <div class="scratch-card"><canvas id="sc6" width="200" height="200"></canvas><div class="scratch-value"><span class="num">2027</span><span class="label">Year</span></div></div>
+        </div>
+      </div>
     </div>
-    <div class="scratch-hint" id="scratchHint">Scratch all three to continue</div>
+    <div class="scratch-hint" id="scratchHint">Scratch all six to continue</div>
     <div class="scratch-revealed-text" id="scratchReveal">We're getting married!</div>
   </div>
 
@@ -296,11 +312,11 @@
 
   <div class="invite-section sec-dresscode">
     <div class="dc-title fade-in">Dress Code</div>
-    <div class="dc-sub fade-in">We'd love for you to wear these colors</div>
+    <div class="dc-sub fade-in">Please dress to celebrate with us</div>
     <div class="dc-events fade-in">
-      <div class="dc-event"><div class="dc-event-name">Mehndi</div><div class="dc-swatches"><div class="dc-swatch-group"><div class="dc-swatch" style="background:#3B3F8C"></div><div class="dc-swatch-name">Royal Blue</div></div><div class="dc-swatch-group"><div class="dc-swatch" style="background:#6B3FA0"></div><div class="dc-swatch-name">Purple</div></div><div class="dc-swatch-group"><div class="dc-swatch" style="background:#2E1A47"></div><div class="dc-swatch-name">Deep Plum</div></div></div></div>
+      <div class="dc-event"><div class="dc-event-name">Mehndi</div><div class="dc-attire">Formal &nbsp;·&nbsp; Black Tie &nbsp;·&nbsp; Traditional</div></div>
       <div class="ornament"><div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line"></div></div>
-      <div class="dc-event"><div class="dc-event-name">Shaadi</div><div class="dc-swatches"><div class="dc-swatch-group"><div class="dc-swatch" style="background:linear-gradient(135deg,#C5A03F,#E8D48A,#C5A03F)"></div><div class="dc-swatch-name">Gold</div></div><div class="dc-swatch-group"><div class="dc-swatch" style="background:#B22234"></div><div class="dc-swatch-name">Red</div></div><div class="dc-swatch-group"><div class="dc-swatch" style="background:#722F37"></div><div class="dc-swatch-name">Burgundy</div></div></div></div>
+      <div class="dc-event"><div class="dc-event-name">Shaadi</div><div class="dc-attire">Formal &nbsp;·&nbsp; Black Tie &nbsp;·&nbsp; Traditional</div></div>
     </div>
   </div>
 
@@ -390,12 +406,12 @@ function startNames() {
 }
 
 // Scratch
-let sc=0; const ss=[0,0,0];
-function initSc(id,i){const c=document.getElementById(id),x=c.getContext('2d'),w=c.width,h=c.height;const g=x.createRadialGradient(w/2,h/2,20,w/2,h/2,w/2);g.addColorStop(0,'#D4B48E');g.addColorStop(0.5,'#B8956A');g.addColorStop(1,'#96744E');x.fillStyle=g;x.beginPath();x.arc(w/2,h/2,w/2,0,Math.PI*2);x.fill();const sh=x.createRadialGradient(w*0.35,h*0.35,5,w/2,h/2,w/2);sh.addColorStop(0,'rgba(255,255,255,0.2)');sh.addColorStop(1,'transparent');x.fillStyle=sh;x.beginPath();x.arc(w/2,h/2,w/2,0,Math.PI*2);x.fill();let d=false;function s(e){if(ss[i])return;const r=c.getBoundingClientRect(),sx=w/r.width,sy=h/r.height;x.globalCompositeOperation='destination-out';x.beginPath();x.arc((e.clientX-r.left)*sx,(e.clientY-r.top)*sy,28,0,Math.PI*2);x.fill();chk(x,w,h,i)}c.addEventListener('pointerdown',e=>{d=true;s(e)});c.addEventListener('pointermove',e=>{if(d)s(e)});c.addEventListener('pointerup',()=>{d=false});c.addEventListener('pointerleave',()=>{d=false})}
-function chk(x,w,h,i){if(ss[i])return;const d=x.getImageData(0,0,w,h).data;let t=0,tr=0;for(let y=0;y<h;y+=4)for(let xx=0;xx<w;xx+=4){const dx=xx-w/2,dy=y-h/2;if(dx*dx+dy*dy<(w/2)*(w/2)){t++;if(d[(y*w+xx)*4+3]<128)tr++}}if(tr/t>0.45){ss[i]=1;x.globalCompositeOperation='destination-out';x.beginPath();x.arc(w/2,h/2,w/2,0,Math.PI*2);x.fill();sc++;if(sc>=3)setTimeout(allSc,300)}}
+let sc=0; const ss=[0,0,0,0,0,0];
+function initSc(id,i){const c=document.getElementById(id),x=c.getContext('2d'),w=c.width,h=c.height;const g=x.createRadialGradient(w/2,h/2,20,w/2,h/2,w/2);g.addColorStop(0,'#D4B48E');g.addColorStop(0.5,'#B8956A');g.addColorStop(1,'#96744E');x.fillStyle=g;x.beginPath();x.arc(w/2,h/2,w/2,0,Math.PI*2);x.fill();const sh=x.createRadialGradient(w*0.35,h*0.35,5,w/2,h/2,w/2);sh.addColorStop(0,'rgba(255,255,255,0.2)');sh.addColorStop(1,'transparent');x.fillStyle=sh;x.beginPath();x.arc(w/2,h/2,w/2,0,Math.PI*2);x.fill();let d=false;function s(e){if(ss[i])return;const r=c.getBoundingClientRect(),sx=w/r.width,sy=h/r.height;x.globalCompositeOperation='destination-out';x.beginPath();x.arc((e.clientX-r.left)*sx,(e.clientY-r.top)*sy,55,0,Math.PI*2);x.fill();chk(x,w,h,i)}c.addEventListener('pointerdown',e=>{d=true;s(e)});c.addEventListener('pointermove',e=>{if(d)s(e)});c.addEventListener('pointerup',()=>{d=false});c.addEventListener('pointerleave',()=>{d=false})}
+function chk(x,w,h,i){if(ss[i])return;const d=x.getImageData(0,0,w,h).data;let t=0,tr=0;for(let y=0;y<h;y+=4)for(let xx=0;xx<w;xx+=4){const dx=xx-w/2,dy=y-h/2;if(dx*dx+dy*dy<(w/2)*(w/2)){t++;if(d[(y*w+xx)*4+3]<128)tr++}}if(tr/t>0.20){ss[i]=1;x.globalCompositeOperation='destination-out';x.beginPath();x.arc(w/2,h/2,w/2,0,Math.PI*2);x.fill();sc++;if(sc>=6)setTimeout(allSc,300)}}
 function allSc(){document.getElementById('scratchReveal').classList.add('visible');document.getElementById('scratchHint').textContent='';fireCf()}
 function fireCf(){const b=document.getElementById('confettiBox'),cols=['#7EB8E0','#A8D4F0','#B8956A','#D4B48E','#1A3A5C','#D0E8F5'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti';const s=5+Math.random()*8;c.style.cssText=`left:${20+Math.random()*60}%;top:-10px;width:${s}px;height:${s*(0.5+Math.random())}px;background:${cols[Math.floor(Math.random()*cols.length)]};--tx:${(Math.random()-0.5)*200}px;--ty:${300+Math.random()*400}px;--rot:${(Math.random()-0.5)*720}deg;animation:confettiFall ${1.5+Math.random()}s ${Math.random()*0.3}s cubic-bezier(0.25,0.46,0.45,0.94) forwards;border-radius:${Math.random()>0.5?'50%':'1px'}`;b.appendChild(c)}setTimeout(()=>{b.innerHTML=''},3000)}
-initSc('sc1',0);initSc('sc2',1);initSc('sc3',2);
+initSc('sc1',0);initSc('sc2',1);initSc('sc3',2);initSc('sc4',3);initSc('sc5',4);initSc('sc6',5);
 
 function updateCD(){const t=new Date('2027-05-28T18:00:00'),n=new Date(),d=t-n;if(d<=0)return;document.getElementById('cdD').textContent=Math.floor(d/864e5);document.getElementById('cdH').textContent=String(Math.floor((d/36e5)%24)).padStart(2,'0');document.getElementById('cdM').textContent=String(Math.floor((d/6e4)%60)).padStart(2,'0');document.getElementById('cdS').textContent=String(Math.floor((d/1e3)%60)).padStart(2,'0')}
 updateCD();setInterval(updateCD,1000);
