@@ -47,19 +47,21 @@
   @keyframes fadeUp{from{opacity:0; transform:translateY(9px)} to{opacity:1; transform:translateY(0)}}
   @keyframes pulse{0%,100%{opacity:.45} 50%{opacity:1}}
 
-  /* ===== butterflies (emerge on open) ===== */
-  #butterflies{position:fixed; inset:0; z-index:260; pointer-events:none}
-  .bfly{position:fixed; left:50%; top:45%; width:36px; height:30px; margin:-15px 0 0 -18px; opacity:0; will-change:transform,opacity}
-  .bfly .wings{transform-origin:50% 50%; animation:flap .17s linear infinite}
-  .bfly path{fill:var(--gold); opacity:.9}
-  .bfly path.lo{fill:var(--gold-d); opacity:.85}
-  @keyframes flap{0%,100%{transform:scaleX(1)} 50%{transform:scaleX(.38)}}
-  body.opened .bfly{animation:fly var(--d,2.6s) cubic-bezier(.25,.6,.3,1) var(--delay,0s) forwards}
-  @keyframes fly{
-    0%{opacity:0; transform:translate(0,0) scale(.35) rotate(0deg)}
-    12%{opacity:1}
-    78%{opacity:1}
-    100%{opacity:0; transform:translate(var(--tx,0),var(--ty,-60vh)) scale(1) rotate(var(--r,0deg))}
+  /* ===== butterflies (lavender — flutter out on open) ===== */
+  #butterflies{position:fixed; inset:0; z-index:260; pointer-events:none; overflow:hidden}
+  .bfly{position:fixed; left:50%; top:46%; width:var(--w,58px); height:var(--w,58px);
+    margin:calc(var(--w,58px)/-2) 0 0 calc(var(--w,58px)/-2); opacity:0; will-change:transform,opacity}
+  .bsvg{width:100%; height:100%; overflow:visible; transform-origin:50% 50%; animation:sway var(--sw,2.6s) ease-in-out infinite}
+  .bfly .wings{transform-origin:50px 50px; animation:flap var(--fl,.62s) ease-in-out infinite}
+  @keyframes flap{0%,100%{transform:scaleX(1)} 48%{transform:scaleX(.32)}}
+  @keyframes sway{0%,100%{transform:rotate(-7deg)} 50%{transform:rotate(7deg)}}
+  body.opened .bfly{animation:journey var(--d,12s) ease-in-out var(--delay,0s) forwards}
+  @keyframes journey{
+    0%{opacity:0; transform:translate(0,0) scale(.4) rotate(0deg)}
+    9%{opacity:1}
+    50%{transform:translate(var(--mx,0),var(--my,-42vh)) scale(var(--s,1)) rotate(calc(var(--r,0deg)*.5))}
+    84%{opacity:.95}
+    100%{opacity:0; transform:translate(var(--tx,0),var(--ty,-96vh)) scale(var(--s,1)) rotate(var(--r,0deg))}
   }
 
   /* ===== scroll story ===== */
@@ -135,7 +137,7 @@
     *{animation:none !important}
     #openVideo,.invited,.tap{opacity:1}
     .scene>*{opacity:1 !important; transform:none !important; transition:none !important}
-    .bfly{display:none}
+    #butterflies{display:none}
     body.opened #openScreen{transition:opacity .4s ease}
   }
 </style>
@@ -151,16 +153,8 @@
     <p class="tap">Tap the seal to open</p>
   </div>
 
-  <!-- butterflies emerge on open -->
-  <div id="butterflies" aria-hidden="true">
-    <svg class="bfly" style="--tx:-46vw;--ty:-58vh;--r:-24deg;--delay:.0s;--d:2.6s"  viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-    <svg class="bfly" style="--tx:40vw;--ty:-62vh;--r:22deg;--delay:.12s;--d:2.7s" viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-    <svg class="bfly" style="--tx:-22vw;--ty:-70vh;--r:-14deg;--delay:.28s;--d:2.9s" viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-    <svg class="bfly" style="--tx:24vw;--ty:-74vh;--r:16deg;--delay:.4s;--d:3s" viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-    <svg class="bfly" style="--tx:-58vw;--ty:-34vh;--r:-30deg;--delay:.18s;--d:2.7s" viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-    <svg class="bfly" style="--tx:56vw;--ty:-40vh;--r:28deg;--delay:.34s;--d:2.8s" viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-    <svg class="bfly" style="--tx:4vw;--ty:-80vh;--r:8deg;--delay:.5s;--d:3.1s" viewBox="0 0 64 56"><g class="wings"><path d="M32 30 C24 6 2 6 9 27 C2 30 8 36 14 33 C22 30 30 33 32 30Z"/><path d="M32 30 C40 6 62 6 55 27 C62 30 56 36 50 33 C42 30 34 33 32 30Z"/><path class="lo" d="M32 31 C26 40 14 44 16 50 C24 54 31 44 32 35Z"/><path class="lo" d="M32 31 C38 40 50 44 48 50 C40 54 33 44 32 35Z"/></g></svg>
-  </div>
+  <!-- butterflies generated on load, flutter out on open -->
+  <div id="butterflies" aria-hidden="true"></div>
 
   <!-- 02–06 · SCROLL STORY -->
   <main id="invite" aria-hidden="true">
@@ -219,9 +213,63 @@
   var wrap=document.getElementById('openWrap');
   wrap.addEventListener('click',openInvite);
   wrap.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openInvite();}});
-  // nudge autoplay on browsers that need it
   var vid=document.getElementById('openVideo');
-  if(vid){ var p=vid.play(); if(p&&p.catch){p.catch(function(){});} }
+  if(vid){ var pp=vid.play(); if(pp&&pp.catch){pp.catch(function(){});} }
+
+  // ----- lavender butterflies (detailed, slow flutter) -----
+  (function(){
+    var box=document.getElementById('butterflies'); if(!box) return;
+    var combos=[
+      {w1:'#b39ddb',w2:'#d6c8ef',w3:'#7e57c2'},
+      {w1:'#a98fd1',w2:'#cbb9e8',w3:'#6f4ea8'},
+      {w1:'#c6b3ea',w2:'#e6dcf8',w3:'#9575cd'},
+      {w1:'#9d80d2',w2:'#bfa9e3',w3:'#5e35b1'},
+      {w1:'#cdbbf0',w2:'#efe6fb',w3:'#a98fd1'}
+    ];
+    var BODY='#473a60';
+    function svg(c){
+      return '<svg class="bsvg" viewBox="0 0 100 96">'
+        +'<g class="wings">'
+        +'<path d="M50 36 C39 15 16 8 7 17 C2 24 9 36 21 41 C33 45 46 44 50 40 Z" fill="'+c.w1+'" stroke="'+c.w3+'" stroke-width="1.1"/>'
+        +'<path d="M50 36 C61 15 84 8 93 17 C98 24 91 36 79 41 C67 45 54 44 50 40 Z" fill="'+c.w1+'" stroke="'+c.w3+'" stroke-width="1.1"/>'
+        +'<path d="M50 45 C40 50 21 55 16 67 C13 76 25 83 36 78 C45 74 50 62 50 51 Z" fill="'+c.w2+'" stroke="'+c.w3+'" stroke-width="1.1"/>'
+        +'<path d="M50 45 C60 50 79 55 84 67 C87 76 75 83 64 78 C55 74 50 62 50 51 Z" fill="'+c.w2+'" stroke="'+c.w3+'" stroke-width="1.1"/>'
+        +'<path d="M40 24 C32 20 24 22 20 28 C27 27 34 27 40 30 Z" fill="#ffffff" opacity=".18"/>'
+        +'<path d="M60 24 C68 20 76 22 80 28 C73 27 66 27 60 30 Z" fill="#ffffff" opacity=".18"/>'
+        +'<circle cx="30" cy="64" r="3.6" fill="'+c.w3+'"/><circle cx="30" cy="64" r="1.4" fill="#fff" opacity=".75"/>'
+        +'<circle cx="70" cy="64" r="3.6" fill="'+c.w3+'"/><circle cx="70" cy="64" r="1.4" fill="#fff" opacity=".75"/>'
+        +'</g>'
+        +'<path d="M50 30 C52.4 32 52.4 42 51.5 52 C51 60 50.6 66 50 71 C49.4 66 49 60 48.5 52 C47.6 42 47.6 32 50 30 Z" fill="'+BODY+'"/>'
+        +'<circle cx="50" cy="29.5" r="2.8" fill="'+BODY+'"/>'
+        +'<path d="M49 28 C45 21 41 17 37 14" stroke="'+BODY+'" stroke-width="1.3" fill="none" stroke-linecap="round"/><circle cx="37" cy="14" r="1.7" fill="'+BODY+'"/>'
+        +'<path d="M51 28 C55 21 59 17 63 14" stroke="'+BODY+'" stroke-width="1.3" fill="none" stroke-linecap="round"/><circle cx="63" cy="14" r="1.7" fill="'+BODY+'"/>'
+        +'</svg>';
+    }
+    var N=20, frag=document.createDocumentFragment();
+    for(var i=0;i<N;i++){
+      var c=combos[i%combos.length];
+      var ang=(-Math.PI/2)+(Math.random()-0.5)*2.05;      // mostly upward, wide spread
+      var dist=72+Math.random()*55;
+      var tx=Math.cos(ang)*dist*0.92;                     // vw
+      var ty=Math.sin(ang)*dist;                          // vh (negative = up)
+      var mx=tx*0.45+(Math.random()-0.5)*34;
+      var my=ty*0.45+(Math.random()-0.5)*18;
+      var w=48+Math.random()*40;                          // 48–88px (larger)
+      var dur=10+Math.random()*7;                         // 10–17s (slow, drifting)
+      var delay=Math.random()*3.6;                        // staggered emergence
+      var rot=(Math.random()-0.5)*64;
+      var s=0.92+Math.random()*0.3;
+      var d=document.createElement('div');
+      d.className='bfly';
+      d.style.cssText='--w:'+w.toFixed(0)+'px;--tx:'+tx.toFixed(1)+'vw;--ty:'+ty.toFixed(1)
+        +'vh;--mx:'+mx.toFixed(1)+'vw;--my:'+my.toFixed(1)+'vh;--r:'+rot.toFixed(0)+'deg;--s:'+s.toFixed(2)
+        +';--d:'+dur.toFixed(1)+'s;--delay:'+delay.toFixed(2)+'s;--fl:'+(0.5+Math.random()*0.4).toFixed(2)
+        +'s;--sw:'+(2.2+Math.random()*1.4).toFixed(2)+'s';
+      d.innerHTML=svg(c);
+      frag.appendChild(d);
+    }
+    box.appendChild(frag);
+  })();
 
   // ----- countdown to the Dua (date only) -----
   var TARGET=new Date('2026-08-28T00:00:00').getTime();
