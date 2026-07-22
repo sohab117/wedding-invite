@@ -109,22 +109,20 @@
     line-height:1.25; color:#7A2E2E; margin:8px 0 2px; white-space:nowrap}
   .daughter-name{font-family:var(--script); font-weight:400; font-size:clamp(42px,12vw,56px);
     line-height:1.2; color:#B8923E; margin-top:7px}
+  .more{position:absolute; left:0; right:0; bottom:calc(28px + env(safe-area-inset-bottom, 0px));
+    display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; z-index:3;
+    font-family:var(--disp); font-size:15.5px; letter-spacing:.06em; color:#8A7B66}
+  .more .chev{display:block; animation:chevBounce 2s ease-in-out infinite}
+  @keyframes chevBounce{0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)}}
 
-  /* 03 · date */
-  .s-dates{background:linear-gradient(180deg,#f1f0e4,#edf0e2)}
-  .dcard{background:#fffdf8; border:1px solid var(--line); border-radius:15px; padding:24px 20px;
-    margin:18px auto 0; width:min(82vw,290px); box-shadow:0 16px 38px -24px rgba(90,70,40,.5)}
-  .dcard .ev{font-family:var(--script); font-size:34px; color:var(--gold); line-height:.9}
-  .dcard .dt{font-family:var(--disp); font-size:clamp(21px,5.8vw,25px); color:var(--ink); margin-top:10px; letter-spacing:.02em}
-  .dcard .dy{font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--soft); margin-top:5px}
-
-  /* 04 · countdown */
-  .s-cd{background:linear-gradient(180deg,#edf0e2,#e8ecda)}
-  .cdrow{display:flex; gap:10px; justify-content:center; margin-top:20px}
-  .cdbox{background:#fffdf8; border:1px solid var(--line); border-radius:12px; padding:16px 0; width:min(19vw,68px)}
-  .cdbox b{display:block; font-family:var(--disp); font-size:clamp(24px,7vw,30px); font-weight:600; color:var(--ink)}
-  .cdbox span{font-size:8.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--soft)}
-  .until{margin-top:20px; font-family:var(--disp); font-style:italic; font-size:16px; color:var(--soft)}
+  /* 03 · save the date (scaled to match Scene 1) */
+  .s-dates{background:linear-gradient(180deg,#f1f0e4,#edf0e2); gap:clamp(10px,1.8vh,18px)}
+  .s-dates .lbl{font-size:clamp(13px,3.6vw,16px)}
+  .sd-line{font-family:var(--disp); font-size:clamp(18px,5vw,24px); color:#6B5E4E}
+  .sd-date{font-family:var(--script); font-weight:400; font-size:clamp(34px,10vw,46px);
+    line-height:1.35; color:#7A2E2E; margin-top:4px}
+  .sd-time{font-family:var(--disp); font-size:clamp(18px,5vw,24px); color:#B8923E;
+    letter-spacing:.08em; margin-top:2px}
 
   /* 05 · rsvp */
   .s-rsvp{background:linear-gradient(180deg,#efe7d8,#e8dac6)}
@@ -178,24 +176,19 @@
       <h1 class="dua-e-khair">Dua-e-Khair</h1>
       <p class="hdr-line">of their beloved daughter</p>
       <p class="daughter-name">Sarah</p>
+      <div class="more" role="button" tabindex="0" aria-label="Continue to event details">
+        <svg class="chev" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+          <path d="M2 2l8 8 8-8" stroke="#B8923E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Tap for more information</span>
+      </div>
     </section>
 
     <section class="scene s-dates">
       <p class="lbl">Save the date</p>
-      <h2 class="dhead">Join us for Dua</h2>
-      <div class="dcard"><div class="ev">Dua</div><div class="dt">August 28, 2026</div><div class="dy">Friday</div></div>
-    </section>
-
-    <section class="scene s-cd">
-      <p class="lbl">The wait</p>
-      <h2 class="dhead">Until we gather</h2>
-      <div class="cdrow">
-        <div class="cdbox"><b id="cdD">--</b><span>Days</span></div>
-        <div class="cdbox"><b id="cdH">--</b><span>Hrs</span></div>
-        <div class="cdbox"><b id="cdM">--</b><span>Min</span></div>
-        <div class="cdbox"><b id="cdS">--</b><span>Sec</span></div>
-      </div>
-      <p class="until">until we gather</p>
+      <p class="sd-line">Join us for Dua</p>
+      <h2 class="sd-date">Saturday,<br>August 29th, 2026</h2>
+      <p class="sd-time">5:00 PM</p>
     </section>
 
     <section class="scene s-rsvp">
@@ -308,18 +301,17 @@
     box.appendChild(frag);
   })();
 
-  // ----- countdown to the Dua (date only) -----
-  var TARGET=new Date('2026-08-28T00:00:00').getTime();
-  function pad(n){return String(n).padStart(2,'0');}
-  function tick(){
-    var d=TARGET-Date.now();
-    if(d<=0){['cdD','cdH','cdM','cdS'].forEach(function(id){document.getElementById(id).textContent='00';});return;}
-    document.getElementById('cdD').textContent=Math.floor(d/86400000);
-    document.getElementById('cdH').textContent=pad(Math.floor(d/3600000)%24);
-    document.getElementById('cdM').textContent=pad(Math.floor(d/60000)%60);
-    document.getElementById('cdS').textContent=pad(Math.floor(d/1000)%60);
-  }
-  tick(); setInterval(tick,1000);
+  // ----- "tap for more information" → next scene -----
+  (function(){
+    var more=document.querySelector('.more');
+    if(!more) return;
+    function goNext(){
+      var smooth=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelector('.s-dates').scrollIntoView({behavior:smooth?'smooth':'auto'});
+    }
+    more.addEventListener('click',goNext);
+    more.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goNext();}});
+  })();
 
   // ----- gentle scroll reveal -----
   var io=new IntersectionObserver(function(es){
