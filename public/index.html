@@ -48,17 +48,17 @@
   #openVideo{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
   #openScreen.novideo #openVideo{display:none} /* video error → poster fallback */
   .tapOpen{
-    position:absolute; left:50%; top:79%; transform:translateX(-50%); z-index:2;
+    position:absolute; left:0; right:0; margin:auto; width:max-content;
+    bottom:calc(13% + env(safe-area-inset-bottom, 0px)); z-index:2;
     font-family:var(--disp); font-style:italic; font-weight:500; font-variant:small-caps;
-    font-size:clamp(16px,4.6vw,19px); letter-spacing:.22em; color:#9c763b; white-space:nowrap;
-    text-shadow:0 0 10px rgba(246,240,228,.95), 0 0 3px rgba(246,240,228,.9);
+    font-size:clamp(18px,5vw,22px); letter-spacing:.12em; color:#7A2E2E; white-space:nowrap;
+    background:rgba(251,247,239,.85); border:1px solid #B8923E; border-radius:999px;
+    padding:10px 22px;
+    animation:tapPulse 2.5s ease-in-out infinite; /* killed by the reduced-motion block */
     transition:opacity .4s ease;
   }
+  @keyframes tapPulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.05)}}
   body.playing .tapOpen, body.opened .tapOpen{opacity:0}
-  @media (min-aspect-ratio:4/3){ /* landscape cover-crop fills the frame with the seal */
-    .tapOpen{top:auto; bottom:3.5%; color:#f6f0e4;
-      text-shadow:0 1px 8px rgba(46,14,14,.75), 0 0 2px rgba(46,14,14,.6)}
-  }
   #whiteOut{position:fixed; inset:0; z-index:300; background:#fff; opacity:0; pointer-events:none}
   #whiteOut.wo-in{opacity:1; transition:opacity .25s ease}
   #whiteOut.wo-out{opacity:0; transition:opacity .95s ease}
