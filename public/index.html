@@ -149,6 +149,8 @@
     color:#8A7B66; margin-top:14px}
   .rsvp-form{width:min(80%,340px); margin:10px auto 0; text-align:left}
   .field{margin-top:16px}
+  .field-row{display:flex; gap:12px; align-items:flex-end}
+  .field-row .field{flex:1; min-width:0}
   .field label{display:block; font-family:var(--disp); font-size:16px; color:#6B5E4E;
     letter-spacing:.02em; margin-bottom:6px}
   .field input{width:100%; background:#FBF7F1; border:1px solid #B8923E; border-radius:8px;
@@ -230,9 +232,15 @@
           <label for="rsvpName">Name</label>
           <input id="rsvpName" name="name" type="text" autocomplete="name" required>
         </div>
-        <div class="field">
-          <label for="rsvpGuests">Number of guests attending with you</label>
-          <input id="rsvpGuests" name="guests" type="number" min="1" max="20" inputmode="numeric" required>
+        <div class="field-row">
+          <div class="field">
+            <label for="rsvpAdults">Number of adults</label>
+            <input id="rsvpAdults" name="adults" type="number" min="1" max="20" inputmode="numeric" required>
+          </div>
+          <div class="field">
+            <label for="rsvpChildren">Number of children (under 13)</label>
+            <input id="rsvpChildren" name="children" type="number" min="0" max="20" inputmode="numeric" value="0">
+          </div>
         </div>
         <div class="field">
           <label for="rsvpPhone">Phone number</label>
@@ -399,10 +407,12 @@
       e.preventDefault(); e.stopPropagation();
       err.hidden=true;
       var name=document.getElementById('rsvpName').value.trim();
-      var guests=Number(document.getElementById('rsvpGuests').value);
+      var adults=Number(document.getElementById('rsvpAdults').value);
+      var childrenRaw=document.getElementById('rsvpChildren').value.trim();
+      var children=childrenRaw===''?0:Number(childrenRaw);
       var phone=document.getElementById('rsvpPhone').value.trim();
-      if(!name||!phone||!guests||guests<1||guests>20){
-        showErr('Please complete all fields (guests 1–20)');
+      if(!name||!phone||!adults||adults<1||adults>20||isNaN(children)||children<0||children>20){
+        showErr('Please complete all fields (adults 1–20, children 0–20)');
         return;
       }
       submit.disabled=true;
@@ -414,7 +424,7 @@
           'Content-Type':'application/json',
           'Prefer':'return=minimal'
         },
-        body:JSON.stringify({name:name, guest_count:guests, phone:phone, event:'dua-e-khair'})
+        body:JSON.stringify({name:name, adults:adults, children:children, phone:phone, event:'dua-e-khair'})
       }).then(function(res){
         if(res.status===201){ form.hidden=true; doneBox.hidden=false; }
         else{ throw new Error('rsvp status '+res.status); }
