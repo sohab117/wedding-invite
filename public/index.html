@@ -17,6 +17,7 @@
     --script:'Great Vibes',cursive; --disp:'Cormorant Garamond',serif; --sans:'Outfit',sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none !important}
   html{height:100%}
   body{
     font-family:var(--sans); color:var(--ink); min-height:100%; overflow:hidden;
@@ -27,7 +28,12 @@
   }
   body.opened{overflow-x:hidden; overflow-y:auto}
 
-  img.seal{object-fit:contain}
+  .seal{object-fit:contain}
+  video.seal{ /* melt the video's white background into the cream scene */
+    mix-blend-mode:multiply;
+    -webkit-mask-image:radial-gradient(circle closest-side at 50% 50%, #000 84%, transparent 100%);
+    mask-image:radial-gradient(circle closest-side at 50% 50%, #000 84%, transparent 100%);
+  }
 
   /* ===== 01 · OPENING (envelope video intro) =====
      Idle state IS the video's first frame (poster = same frame as backstop);
@@ -95,7 +101,6 @@
   .orn span:last-child{background:linear-gradient(270deg,transparent,var(--gold-l))}
   .orn i{width:7px; height:7px; background:var(--gold); transform:rotate(45deg)}
   .lbl{font-size:10.5px; letter-spacing:.34em; text-transform:uppercase; color:var(--gold); font-weight:500}
-  .dhead{font-family:var(--disp); font-weight:500; font-size:clamp(23px,6.4vw,28px); margin:8px 0 0}
 
   /* 02 · couple — Dua-e-Khair header (scaled to fill the phone viewport) */
   .s-couple{background:linear-gradient(180deg,#fbf7f1,#f4f1e6); min-height:100dvh;
@@ -127,22 +132,41 @@
   .sd-addr{font-family:var(--disp); font-size:clamp(18px,5vw,22px); color:#6B5E4E;
     letter-spacing:.03em; line-height:1.5; text-decoration:none; display:block}
 
-  /* 05 · rsvp */
-  .s-rsvp{background:linear-gradient(180deg,#efe7d8,#e8dac6)}
-  .btn{display:inline-block; margin-top:22px; font-family:var(--sans); font-size:12px; letter-spacing:.24em;
-    text-transform:uppercase; color:#fff; text-decoration:none; background:var(--gold); padding:15px 38px;
-    border-radius:40px; box-shadow:0 14px 30px -14px rgba(120,90,40,.75); transition:transform .3s, box-shadow .3s}
-  .btn:hover{transform:translateY(-2px); box-shadow:0 18px 36px -14px rgba(120,90,40,.8)}
-  .by{font-size:11px; letter-spacing:.06em; color:var(--soft); margin-top:18px}
+  /* 04 · rsvp (styled to match Scene 1) */
+  .s-rsvp{background:linear-gradient(180deg,#f6f1e4,#efe7d6)}
+  .rsvp-head{font-family:var(--script); font-weight:400; font-size:clamp(36px,10vw,46px);
+    line-height:1.2; color:#7A2E2E}
+  .rsvp-sub{font-family:var(--disp); font-style:italic; font-size:clamp(18px,5vw,22px);
+    color:#6B5E4E; margin-top:8px}
+  .rsvp-btn{display:block; width:80%; max-width:340px; min-height:56px; margin:24px auto 0;
+    font-family:var(--disp); font-size:20px; letter-spacing:.08em; color:#FBF7F1;
+    background:#7A2E2E; border:0; border-radius:8px; cursor:pointer;
+    transition:transform .25s ease, opacity .25s ease}
+  .rsvp-btn:active{transform:scale(.985)}
+  .rsvp-btn[disabled]{opacity:.55; cursor:default}
+  .rsvp-note{font-family:var(--disp); font-style:italic; font-size:clamp(15px,4vw,17px);
+    color:#8A7B66; margin-top:14px}
+  .rsvp-form{width:min(80%,340px); margin:10px auto 0; text-align:left}
+  .field{margin-top:16px}
+  .field label{display:block; font-family:var(--disp); font-size:16px; color:#6B5E4E;
+    letter-spacing:.02em; margin-bottom:6px}
+  .field input{width:100%; background:#FBF7F1; border:1px solid #B8923E; border-radius:8px;
+    font-family:var(--disp); font-size:18px; color:var(--ink); padding:15px 16px; outline:none}
+  .field input:focus{border-color:#7A2E2E}
+  .rsvp-err{font-family:var(--disp); font-size:16px; color:#7A2E2E; margin-top:14px}
+  .rsvp-done .gold-line{width:64px; height:1px; background:rgba(184,146,62,.6); margin:0 auto 14px}
+  .done-hero{font-family:var(--script); font-size:clamp(28px,8vw,36px); color:#B8923E; line-height:1.35}
+  .done-sub{font-family:var(--disp); font-style:italic; font-size:clamp(16px,4.5vw,19px);
+    color:#6B5E4E; margin-top:8px}
 
   /* 06 · verse */
   .s-verse{background:radial-gradient(380px 320px at 50% 28%, #fffdf6, #f1e9d8)}
-  .s-verse .seal{width:78px; height:78px}
+  .s-verse{padding-top:36px; padding-bottom:36px}
+  .s-verse .seal{width:min(60vw,250px); height:auto; aspect-ratio:1}
   .q{font-family:var(--disp); font-style:italic; font-size:clamp(17px,4.8vw,19px); line-height:1.6;
     color:var(--ink); max-width:300px; margin-top:18px}
   .src{font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-top:16px}
   .sig{font-family:var(--script); font-size:clamp(38px,11vw,46px); color:var(--ink); margin-top:30px; line-height:.9}
-  .url{font-size:11px; letter-spacing:.2em; color:var(--soft); margin-top:8px}
 
   @media(min-width:900px){ #invite{max-width:580px; margin:0 auto} }
 
@@ -194,18 +218,42 @@
     </section>
 
     <section class="scene s-rsvp">
-      <h2 class="dhead">Kindly Respond</h2>
-      <p class="by" style="margin-top:8px;font-size:14px">We would be honored by your presence.</p>
-      <a class="btn" href="#" aria-label="RSVP (coming soon)">RSVP</a>
-      <p class="by" id="rsvpBy">Kindly respond at your earliest convenience</p>
+      <h2 class="rsvp-head">Kindly Respond</h2>
+      <p class="rsvp-sub">We would be honored by your presence.</p>
+
+      <button class="rsvp-btn" id="rsvpOpen" type="button">RSVP</button>
+      <p class="rsvp-note" id="rsvpNote">Kindly respond at your earliest convenience</p>
+
+      <form class="rsvp-form" id="rsvpForm" hidden novalidate>
+        <div class="field">
+          <label for="rsvpName">Name</label>
+          <input id="rsvpName" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="rsvpGuests">Number of guests attending with you</label>
+          <input id="rsvpGuests" name="guests" type="number" min="1" max="20" inputmode="numeric" required>
+        </div>
+        <div class="field">
+          <label for="rsvpPhone">Phone number</label>
+          <input id="rsvpPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required>
+        </div>
+        <p class="rsvp-err" id="rsvpErr" hidden></p>
+        <button class="rsvp-btn" id="rsvpSubmit" type="submit">Submit</button>
+      </form>
+
+      <div class="rsvp-done" id="rsvpDone" hidden>
+        <div class="gold-line" aria-hidden="true"></div>
+        <p class="done-hero">Your response has been recorded</p>
+        <p class="done-sub">We look forward to celebrating with you, inshallah</p>
+      </div>
     </section>
 
     <section class="scene s-verse">
-      <img class="seal" src="seal.png" alt="">
+      <video class="seal" id="sealVid" src="assets/monogram-draw.mp4" poster="seal.png"
+             muted playsinline preload="metadata" aria-hidden="true"></video>
       <p class="q">"And among His signs is that He created for you mates from among yourselves, that you may dwell in tranquility with them, and He has put love and mercy between your hearts."</p>
       <p class="src">Quran 30:21</p>
       <p class="sig">Sarah &amp; Sohab</p>
-      <p class="url">sarahandsohab.com</p>
     </section>
 
   </main>
@@ -325,6 +373,78 @@
       el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goNext();}});
       scene.appendChild(el);
     });
+  })();
+
+  // ----- RSVP form (Supabase REST, dependency-free) -----
+  (function(){
+    var open=document.getElementById('rsvpOpen');
+    if(!open) return;
+    var note=document.getElementById('rsvpNote');
+    var form=document.getElementById('rsvpForm');
+    var doneBox=document.getElementById('rsvpDone');
+    var err=document.getElementById('rsvpErr');
+    var submit=document.getElementById('rsvpSubmit');
+    // keep taps inside the form from reaching anything else
+    ['click','touchstart','pointerdown'].forEach(function(t){
+      form.addEventListener(t,function(e){e.stopPropagation();});
+    });
+    open.addEventListener('click',function(e){
+      e.stopPropagation();
+      open.hidden=true; note.hidden=true; form.hidden=false;
+      document.getElementById('rsvpName').focus();
+    });
+    function showErr(msg){ err.textContent=msg; err.hidden=false; }
+    form.addEventListener('submit',function(e){
+      e.preventDefault(); e.stopPropagation();
+      err.hidden=true;
+      var name=document.getElementById('rsvpName').value.trim();
+      var guests=Number(document.getElementById('rsvpGuests').value);
+      var phone=document.getElementById('rsvpPhone').value.trim();
+      if(!name||!phone||!guests||guests<1||guests>20){
+        showErr('Please complete all fields (guests 1–20)');
+        return;
+      }
+      submit.disabled=true;
+      fetch('https://hlowtafumutjxjbanjpe.supabase.co/rest/v1/rsvps',{
+        method:'POST',
+        headers:{
+          'apikey':'sb_publishable_3Js0qnxWpNpy65gQQz3GZQ_lY8GAweK',
+          'Authorization':'Bearer sb_publishable_3Js0qnxWpNpy65gQQz3GZQ_lY8GAweK',
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify({name:name, guest_count:guests, phone:phone, event:'dua-e-khair'})
+      }).then(function(res){
+        if(res.status===201){ form.hidden=true; doneBox.hidden=false; }
+        else{ throw new Error('rsvp status '+res.status); }
+      }).catch(function(){
+        submit.disabled=false;
+        showErr('Something went wrong — please try again');
+      });
+    });
+  })();
+
+  // ----- monogram draw-on (last scene) — plays once when the scene appears -----
+  (function(){
+    var v=document.getElementById('sealVid'); if(!v) return;
+    function toImg(){
+      if(!v.parentNode) return;
+      var img=document.createElement('img');
+      img.className='seal'; img.src='seal.png'; img.alt='';
+      v.parentNode.replaceChild(img,v);
+    }
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ toImg(); return; }
+    v.addEventListener('error',toImg);
+    var vio=new IntersectionObserver(function(es){
+      es.forEach(function(en){
+        if(en.isIntersecting){
+          vio.disconnect();
+          var p=v.play();
+          if(p&&p.catch) p.catch(toImg);
+        }
+      });
+    },{threshold:.5});
+    vio.observe(v);
   })();
 
   // ----- gentle scroll reveal -----
