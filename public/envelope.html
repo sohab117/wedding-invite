@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f2ebdb">
+<title>Sarah &amp; Sohab — You're Invited</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f2ebdb;
+    --gold-text:#9c763b;
+
+    /* fallback-composition knobs (see FALLBACK section below) */
+    --flap-edge:56%;
+    --paper-zoom:163dvh;
+    --paper:url("assets/envelope-embossed.png");
+  }
+  @media (min-aspect-ratio: 3/4){ :root{--paper-zoom:190dvh} }
+  @media (min-aspect-ratio: 4/3){ :root{--paper-zoom:230dvh} }
+
+  *{margin:0; padding:0; box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    overflow:hidden; background:var(--cream);
+    -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;
+  }
+
+  .stage{position:fixed; inset:0; height:100vh; height:100dvh; overflow:hidden; cursor:pointer}
+
+  /* ===== PRIMARY: pre-rendered opening video =====
+     Idle state IS the video, paused on its first frame — idle frame and
+     animation are pixel-identical, so there is no swap jump on tap. */
+  .open-video{
+    position:fixed; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:center; background:var(--cream);
+  }
+  body.fallback .open-video{display:none}
+
+  /* white transition surface — the next scene fades in under this */
+  .white-out{
+    position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  body.whiteout .white-out{opacity:1}
+  body.fallback .white-out{transition-duration:.8s}
+
+  .tap{ /* video's seal is larger than the fallback's — sit below it */
+    position:absolute; left:50%; top:79%;
+    transform:translateX(-50%); z-index:2;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500;
+    font-variant:small-caps; font-size:clamp(16px, 4.6vw, 19px);
+    letter-spacing:.22em; color:var(--gold-text); white-space:nowrap;
+    text-shadow:0 0 10px rgba(246,240,228,.95), 0 0 3px rgba(246,240,228,.9);
+    transition:opacity .4s ease;
+  }
+  body.opened .tap{opacity:0}
+  body.fallback .tap{top:calc(var(--flap-edge) + clamp(78px, 23vw, 128px))}
+  /* landscape cover-crop fills the frame with the seal — pin the hint to the bottom */
+  @media (min-aspect-ratio: 4/3){
+    body:not(.fallback) .tap{
+      top:auto; bottom:3.5%; color:#f6f0e4;
+      text-shadow:0 1px 8px rgba(46,14,14,.75), 0 0 2px rgba(46,14,14,.6);
+    }
+  }
+
+  /* =====================================================================
+     FALLBACK ONLY — CSS-composed sealed envelope + dormant 3D flap rig.
+     Shown only when body.fallback is set (video error, play() rejection,
+     or prefers-reduced-motion). The rig is kept for a possible coded open
+     on this path; the video path never uses any of it.
+     ===================================================================== */
+  .css-envelope{display:none}
+  body.fallback .css-envelope{display:block}
+
+  .paper-base{
+    position:absolute; inset:0;
+    background:var(--cream) var(--paper) 50% 100% / auto var(--paper-zoom) no-repeat;
+  }
+  .scene{position:absolute; inset:0; perspective:1200px; perspective-origin:50% 30%}
+  .flap-shadow{
+    position:absolute; left:0; right:0; top:var(--flap-edge); height:52px;
+    background:linear-gradient(180deg, rgba(88,66,38,.34), rgba(88,66,38,.30) 4%, rgba(94,72,42,.16) 26%, rgba(94,72,42,.06) 55%, rgba(94,72,42,0) 100%);
+  }
+  .flap{position:absolute; inset:0; transform-origin:50% 0; transform-style:preserve-3d}
+  .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden}
+  .face.front{
+    background:var(--cream) var(--paper) 50% 0 / auto var(--paper-zoom) no-repeat;
+    clip-path:inset(0 0 calc(100% - var(--flap-edge)) 0);
+  }
+  .face.front::after{
+    content:""; position:absolute; left:0; right:0;
+    top:calc(var(--flap-edge) - 1.5px); height:1.5px;
+    background:linear-gradient(90deg, rgba(255,253,246,0), rgba(255,253,246,.85) 18% 82%, rgba(255,253,246,0));
+  }
+  .face.back{
+    transform:rotateX(180deg);
+    clip-path:inset(calc(100% - var(--flap-edge)) 0 0 0);
+    background:linear-gradient(180deg, #ece4d0, #f4eddd);
+  }
+  .seal{
+    position:absolute; left:50%; top:var(--flap-edge);
+    width:clamp(112px, 35.9vw, 200px);
+    transform:translate(-50%, -50%);
+    filter:drop-shadow(0 5px 10px rgba(62,20,18,.32)) drop-shadow(0 1px 3px rgba(62,20,18,.28));
+  }
+</style>
+</head>
+<body>
+
+  <main class="stage" id="stage" role="button" tabindex="0" aria-label="Tap to open the invitation">
+
+    <video id="openVideo" class="open-video"
+           src="assets/envelope-open.mp4"
+           poster="assets/envelope-open-poster.jpg"
+           preload="auto" muted playsinline></video>
+
+    <!-- FALLBACK ONLY: CSS sealed composition (see stylesheet note) -->
+    <div class="css-envelope" aria-hidden="true">
+      <div class="paper-base"></div>
+      <div class="scene">
+        <div class="flap-shadow"></div>
+        <div class="flap">
+          <div class="face back"></div>
+          <div class="face front"></div>
+          <img class="seal" src="assets/seal-bismillah.png" alt="">
+        </div>
+      </div>
+    </div>
+
+    <p class="tap" aria-hidden="true">tap to open</p>
+    <div class="white-out" aria-hidden="true"></div>
+  </main>
+
+<script>
+(function(){
+  var video = document.getElementById('openVideo');
+  var stage = document.getElementById('stage');
+  var WHITE_LEAD = 0.15;          // fade the white overlay in this long before the video ends
+  var opened = false, fired = false;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function useFallback(){ document.body.classList.add('fallback'); }
+  if (reduceMotion) useFallback();
+  video.addEventListener('error', useFallback);
+
+  function fireOpened(){
+    if (fired) return;
+    fired = true;
+    document.dispatchEvent(new CustomEvent('envelopeOpened'));
+  }
+
+  function whiteOut(){ document.body.classList.add('whiteout'); }
+
+  // fallback path: no video — simple 0.8s fade to white, then the event
+  function fallbackOpen(){
+    useFallback();
+    whiteOut();
+    setTimeout(fireOpened, 850);
+  }
+
+  function open(){
+    if (opened) return;
+    opened = true;
+    document.body.classList.add('opened');
+    if (document.body.classList.contains('fallback')){ fallbackOpen(); return; }
+    var p = video.play();
+    if (p && p.catch) p.catch(function(){ opened = true; fallbackOpen(); });
+  }
+
+  video.addEventListener('timeupdate', function(){
+    if (!opened || !video.duration) return;
+    if (video.currentTime >= video.duration - WHITE_LEAD){
+      whiteOut();
+      fireOpened();
+    }
+  });
+  video.addEventListener('ended', function(){ whiteOut(); fireOpened(); }); // backstop
+
+  stage.addEventListener('click', open);
+  stage.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+  });
+})();
+</script>
+</body>
+</html>

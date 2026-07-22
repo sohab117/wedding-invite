@@ -6,7 +6,7 @@
 <title>Sarah & Sohab — You're Invited</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream:#fbf7f1; --cream2:#f2eee2;
@@ -29,23 +29,33 @@
 
   img.seal{object-fit:contain}
 
-  /* ===== 01 · OPENING (logo video) ===== */
+  /* ===== 01 · OPENING (envelope video intro) =====
+     Idle state IS the video's first frame (poster = same frame as backstop);
+     tap plays the 5s open animation, which ends on pure white — #whiteOut
+     covers the stop, the invite reveals beneath it, then the white fades out. */
   #openScreen{
-    position:fixed; inset:0; z-index:200; overflow:hidden;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    background:radial-gradient(circle at 50% 46%, #fbf7f1 0%, #fbf7f1 56%, #f1ebdf 100%);
-    transition:opacity .9s ease, transform 1.2s cubic-bezier(.2,.7,.2,1), filter .9s ease;
+    position:fixed; inset:0; z-index:200; overflow:hidden; cursor:pointer;
+    background:#f2ebdb url('assets/envelope-open-poster.jpg') 50% 50% / cover no-repeat;
+    transition:opacity .5s ease;
   }
-  body.opened #openScreen{opacity:0; transform:scale(1.7); filter:brightness(1.5) blur(2px); pointer-events:none}
-  .invited{font-family:var(--disp); font-style:italic; font-size:clamp(15px,4.4vw,19px); color:var(--soft);
-    margin-bottom:2px; opacity:0; animation:fadeUp 1.1s .2s forwards}
-  #openWrap{cursor:pointer; line-height:0}
-  #openVideo{width:min(82vw,360px); height:auto; display:block; opacity:0; mix-blend-mode:multiply; animation:fadeIn 1s .15s forwards}
-  .tap{margin-top:14px; font-size:11px; letter-spacing:.32em; text-transform:uppercase; color:var(--gold);
-    font-weight:500; opacity:0; animation:fadeUp 1s 1.1s forwards, pulse 2.8s 2s ease-in-out infinite}
-  @keyframes fadeIn{to{opacity:1}}
-  @keyframes fadeUp{from{opacity:0; transform:translateY(9px)} to{opacity:1; transform:translateY(0)}}
-  @keyframes pulse{0%,100%{opacity:.45} 50%{opacity:1}}
+  body.opened #openScreen{opacity:0; pointer-events:none}
+  #openVideo{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
+  #openScreen.novideo #openVideo{display:none} /* video error → poster fallback */
+  .tapOpen{
+    position:absolute; left:50%; top:79%; transform:translateX(-50%); z-index:2;
+    font-family:var(--disp); font-style:italic; font-weight:500; font-variant:small-caps;
+    font-size:clamp(16px,4.6vw,19px); letter-spacing:.22em; color:#9c763b; white-space:nowrap;
+    text-shadow:0 0 10px rgba(246,240,228,.95), 0 0 3px rgba(246,240,228,.9);
+    transition:opacity .4s ease;
+  }
+  body.playing .tapOpen, body.opened .tapOpen{opacity:0}
+  @media (min-aspect-ratio:4/3){ /* landscape cover-crop fills the frame with the seal */
+    .tapOpen{top:auto; bottom:3.5%; color:#f6f0e4;
+      text-shadow:0 1px 8px rgba(46,14,14,.75), 0 0 2px rgba(46,14,14,.6)}
+  }
+  #whiteOut{position:fixed; inset:0; z-index:300; background:#fff; opacity:0; pointer-events:none}
+  #whiteOut.wo-in{opacity:1; transition:opacity .25s ease}
+  #whiteOut.wo-out{opacity:0; transition:opacity .95s ease}
 
   /* ===== butterflies (lavender — flutter out on open) ===== */
   #butterflies{position:fixed; inset:0; z-index:260; pointer-events:none; overflow:hidden}
@@ -87,16 +97,17 @@
   .lbl{font-size:10.5px; letter-spacing:.34em; text-transform:uppercase; color:var(--gold); font-weight:500}
   .dhead{font-family:var(--disp); font-weight:500; font-size:clamp(23px,6.4vw,28px); margin:8px 0 0}
 
-  /* 02 · couple */
+  /* 02 · couple — Dua-e-Khair header */
   .s-couple{background:linear-gradient(180deg,#fbf7f1,#f4f1e6)}
-  .s-couple .seal{width:92px; height:92px; opacity:.97}
-  .pre{font-family:var(--disp); font-style:italic; font-size:clamp(15px,4.2vw,17px); color:var(--soft);
-    margin-top:18px; max-width:300px; line-height:1.5}
-  .names{font-family:var(--script); font-weight:400; font-size:clamp(38px,11.5vw,64px); line-height:.92;
-    color:var(--ink); margin:8px 0 6px; max-width:100%; white-space:nowrap}
-  .names .amp{color:var(--gold)}
-  .post{font-family:var(--disp); font-size:clamp(15px,4.2vw,17px); color:var(--soft); font-weight:300;
-    max-width:260px; line-height:1.5}
+  .bismillah{font-family:'Amiri Quran',serif; font-weight:400; font-size:clamp(26px,7vw,34px);
+    line-height:1.9; color:#B8923E; max-width:100%}
+  .hdr-divider{width:56px; height:1px; background:rgba(184,146,62,.6); margin:22px auto}
+  .host{font-family:var(--disp); font-size:clamp(16px,4.4vw,17px); color:#6B5E4E; letter-spacing:.04em}
+  .hdr-line{font-family:var(--disp); font-style:italic; font-size:14px; color:#8A7B66; margin-top:9px}
+  .dua-e-khair{font-family:var(--script); font-weight:400; font-size:clamp(30px,9vw,38px);
+    line-height:1.25; color:#7A2E2E; margin:8px 0 2px}
+  .daughter-name{font-family:var(--script); font-weight:400; font-size:clamp(26px,8vw,34px);
+    line-height:1.2; color:#B8923E; margin-top:7px}
 
   /* 03 · date */
   .s-dates{background:linear-gradient(180deg,#f1f0e4,#edf0e2)}
@@ -135,23 +146,22 @@
 
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important}
-    #openVideo,.invited,.tap{opacity:1}
     .scene>*{opacity:1 !important; transform:none !important; transition:none !important}
     #butterflies{display:none}
     body.opened #openScreen{transition:opacity .4s ease}
+    #whiteOut.wo-out{transition-duration:.4s}
   }
 </style>
 </head>
 <body>
 
   <!-- 01 · OPENING -->
-  <div id="openScreen">
-    <p class="invited">You are warmly invited</p>
-    <div id="openWrap" role="button" tabindex="0" aria-label="Open the invitation">
-      <video id="openVideo" src="logo.mp4" poster="seal.png" muted autoplay playsinline preload="auto"></video>
-    </div>
-    <p class="tap">Tap the seal to open</p>
+  <div id="openScreen" role="button" tabindex="0" aria-label="Tap to open the invitation">
+    <video id="openVideo" src="assets/envelope-open.mp4" poster="assets/envelope-open-poster.jpg"
+           preload="auto" muted playsinline></video>
+    <p class="tapOpen" aria-hidden="true">tap to open</p>
   </div>
+  <div id="whiteOut" aria-hidden="true"></div>
 
   <!-- butterflies generated on load, flutter out on open -->
   <div id="butterflies" aria-hidden="true"></div>
@@ -160,11 +170,13 @@
   <main id="invite" aria-hidden="true">
 
     <section class="scene s-couple">
-      <img class="seal" src="seal.png" alt="Sarah & Sohab monogram">
-      <p class="pre">Together with their families, and with the blessings of Allah</p>
-      <h1 class="names">Sarah <span class="amp">&amp;</span> Sohab</h1>
-      <p class="post">invite you to join them in Dua</p>
-      <div class="orn"><span></span><i></i><span></span></div>
+      <p class="bismillah" dir="rtl" lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+      <div class="hdr-divider" aria-hidden="true"></div>
+      <p class="host">Mr and Mrs Rauf Chaudhry</p>
+      <p class="hdr-line">cordially invite you and your family to the</p>
+      <h1 class="dua-e-khair">Dua-e-Khair</h1>
+      <p class="hdr-line">of their beloved daughter</p>
+      <p class="daughter-name">Sarah</p>
     </section>
 
     <section class="scene s-dates">
@@ -203,18 +215,42 @@
   </main>
 
 <script>
-  // ----- open (bloom + butterflies) -----
-  function openInvite(){
-    if(document.body.classList.contains('opened')) return;
-    document.body.classList.add('opened');
-    document.getElementById('invite').setAttribute('aria-hidden','false');
-    window.scrollTo(0,0);
-  }
-  var wrap=document.getElementById('openWrap');
-  wrap.addEventListener('click',openInvite);
-  wrap.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openInvite();}});
-  var vid=document.getElementById('openVideo');
-  if(vid){ var pp=vid.play(); if(pp&&pp.catch){pp.catch(function(){});} }
+  // ----- open (envelope video → white → invite + butterflies) -----
+  (function(){
+    var vid=document.getElementById('openVideo');
+    var screen=document.getElementById('openScreen');
+    var white=document.getElementById('whiteOut');
+    var opened=false, revealed=false;
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    vid.addEventListener('error',function(){ screen.classList.add('novideo'); });
+
+    function reveal(){
+      if(revealed) return; revealed=true;
+      document.body.classList.add('opened');
+      document.getElementById('invite').setAttribute('aria-hidden','false');
+      window.scrollTo(0,0);
+      document.dispatchEvent(new CustomEvent('envelopeOpened'));
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        white.classList.remove('wo-in'); white.classList.add('wo-out');
+      });});
+    }
+    function whiteThenReveal(){ white.classList.add('wo-in'); setTimeout(reveal, reduce?60:380); }
+
+    function openInvite(){
+      if(opened) return; opened=true;
+      document.body.classList.add('playing');
+      if(reduce || screen.classList.contains('novideo')){ whiteThenReveal(); return; }
+      var p=vid.play();
+      if(p&&p.catch){ p.catch(function(){ whiteThenReveal(); }); }
+    }
+    vid.addEventListener('timeupdate',function(){
+      if(!opened||revealed||!vid.duration) return;
+      if(vid.currentTime>=vid.duration-0.15){ white.classList.add('wo-in'); setTimeout(reveal,260); }
+    });
+    vid.addEventListener('ended',function(){ if(opened&&!revealed){ white.classList.add('wo-in'); reveal(); } });
+    screen.addEventListener('click',openInvite);
+    screen.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openInvite();}});
+  })();
 
   // ----- lavender butterflies (detailed, slow flutter) -----
   (function(){
