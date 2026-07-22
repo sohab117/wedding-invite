@@ -179,12 +179,6 @@
       <h1 class="dua-e-khair">Dua-e-Khair</h1>
       <p class="hdr-line">of their beloved daughter</p>
       <p class="daughter-name">Sarah</p>
-      <div class="more" role="button" tabindex="0" aria-label="Continue to event details">
-        <svg class="chev" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
-          <path d="M2 2l8 8 8-8" stroke="#B8923E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>Tap for more information</span>
-      </div>
     </section>
 
     <section class="scene s-dates">
@@ -309,16 +303,28 @@
     box.appendChild(frag);
   })();
 
-  // ----- "tap for more information" → next scene -----
+  // ----- "tap for more information" affordance — every scene but the last -----
   (function(){
-    var more=document.querySelector('.more');
-    if(!more) return;
-    function goNext(){
-      var smooth=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelector('.s-dates').scrollIntoView({behavior:smooth?'smooth':'auto'});
-    }
-    more.addEventListener('click',goNext);
-    more.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goNext();}});
+    var scenes=[].slice.call(document.querySelectorAll('.scene'));
+    scenes.forEach(function(scene,i){
+      if(i===scenes.length-1) return; // final (verse) scene stays clean
+      var next=scenes[i+1];
+      var el=document.createElement('div');
+      el.className='more';
+      el.setAttribute('role','button');
+      el.setAttribute('tabindex','0');
+      el.setAttribute('aria-label','Continue to next section');
+      el.innerHTML='<svg class="chev" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">'
+        +'<path d="M2 2l8 8 8-8" stroke="#B8923E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +'<span>Tap for more information</span>';
+      function goNext(){
+        var smooth=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        next.scrollIntoView({behavior:smooth?'smooth':'auto'});
+      }
+      el.addEventListener('click',goNext);
+      el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goNext();}});
+      scene.appendChild(el);
+    });
   })();
 
   // ----- gentle scroll reveal -----
