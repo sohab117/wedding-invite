@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Butterfly retrace — test bench</title>
+<style>
+  :root{ --gold:#B8923E; }
+  *{margin:0; padding:0; box-sizing:border-box}
+  body{
+    min-height:100vh; background:#FBF7EF; font-family:Georgia,serif; color:#6B5E4E;
+    display:flex; flex-direction:column; align-items:center; gap:18px; padding:28px 16px 48px;
+  }
+  h1{font-size:15px; font-weight:normal; letter-spacing:.18em; text-transform:uppercase; color:#9c763b}
+  .stage{font-size:13px; letter-spacing:.08em; color:#8A7B66}
+  .compare{display:flex; flex-wrap:wrap; gap:26px; justify-content:center; align-items:flex-start}
+  .panel{display:flex; flex-direction:column; align-items:center; gap:8px}
+  .panel span{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#8A7B66}
+  .art{width:min(70vw,500px); aspect-ratio:1; display:block}
+  img.art{object-fit:contain}
+  button{
+    font-family:inherit; font-size:14px; letter-spacing:.1em; color:#FBF7EF; background:#7A2E2E;
+    border:0; border-radius:8px; padding:12px 30px; cursor:pointer;
+  }
+
+  /* butterfly linework */
+  #bfly path{
+    stroke:var(--gold); fill:none;
+    stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1; stroke-dashoffset:1; /* hidden until drawn on */
+  }
+  #bfly .w14{stroke-width:1.4}
+  #bfly .w9{stroke-width:.9}
+
+  /* stage 4 · draw-on: gold ink drawing itself, staggered by --o per group
+     order: body(0) -> fw outline(1) -> hw outline(2) -> venation(3) -> cells/scallops(4) -> eyespots/filigree(5) */
+  #bfly.play path{
+    animation:draw .9s cubic-bezier(.33,1,.68,1) forwards;
+    animation-delay:calc(var(--o,0) * .22s);
+  }
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @media (prefers-reduced-motion: reduce){
+    #bfly path{stroke-dashoffset:0 !important; animation:none !important}
+  }
+</style>
+</head>
+<body>
+
+  <h1>Butterfly retrace</h1>
+  <p class="stage">Stage 4 — draw-on animation (staggered gold ink, ~2.2s, replay below)</p>
+
+  <div class="compare">
+    <div class="panel">
+      <span>Retrace (SVG)</span>
+      <svg id="bfly" class="art" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- ============ RIGHT HALF (script clones it into the mirrored group) ============ -->
+        <g class="hf" id="halfR">
+            <!-- forewing outline: costal arc -> rounded apex -> outer edge -> scalloped lower margin (7) -> inner edge -->
+            <g style="--o:1">
+            <path class="w14" pathLength="1" d="M103.3 85.4
+              C111 72 124 59 139 51.5
+              C154 44.5 170 42.4 181 43
+              C183.5 43.2 184.3 45.4 184.2 48.6
+              C184 57 183.6 66 182.8 74
+              C182 82 180.6 89 178.4 95
+              C176.4 97.8 174.8 97.6 172.7 96.2
+              C168 99.8 164.6 100.4 160.9 98.6
+              C156.6 101.8 152.6 102 149.2 100
+              C144.6 101.6 141 101.2 137.5 99.6
+              C133 101 129.4 100 125.8 98
+              C121.8 99.8 117.6 98.2 114.1 96.1
+              C111.4 97.7 108.9 96.3 107.2 95.1
+              C105.8 92 104.4 88.6 103.3 85.4 Z"/>
+            </g>
+
+            <!-- hindwing outline: sweep out -> 5 lacy lobes -> tail -> teardrop tip -> inner edge hugging the abdomen -->
+            <g style="--o:2">
+            <path class="w14" pathLength="1" d="M104.3 100
+              C116 99.6 134 100.6 148 103.2
+              C157.5 105.2 165.5 108 168.6 111.2
+              C169.2 114.8 167 117.6 163.2 118
+              C166.6 120.4 167.4 124 164 126.4
+              C167 129 167 132.8 163.2 134.8
+              C166 137.6 165.6 141.4 161.6 142.8
+              C163.6 145.6 162.8 149 158.8 150.4
+              C160.4 153.4 159.6 156.6 156.4 159
+              C154 160.8 152.2 162.6 150.9 165
+              C149.3 167.6 147.6 170.6 146 173
+              C145.1 174.9 143.3 175.4 142.3 174.2
+              C141.4 173.1 141.9 171.4 143.3 170.7
+              C141.6 168.7 139.6 166.6 138.1 164.3
+              C137.3 163 136.8 161.5 135.5 160.2
+              C130 155 124.5 149 121 144.5
+              C115 137 110 128 107.5 119
+              C106 113 105 108 104.3 104.2 Z"/>
+
+            <!-- outer tail flourish: spiral curl -->
+            <path class="w14" pathLength="1" d="M150.9 165
+              C148 167.2 144.9 167.1 143.7 165
+              C142.5 162.9 143.9 160.4 146.6 160.1
+              C148.7 159.9 150.3 161.3 150 163.1
+              C149.8 164.4 148.5 165.2 147.3 164.7"/>
+
+            <!-- inner tail flourish: spiral curl -->
+            <path class="w14" pathLength="1" d="M135.5 160.2
+              C132 160.2 129.4 162.5 130.2 165.4
+              C131 168.2 134.6 169 136.7 167.1
+              C138.3 165.6 138 163.1 136.3 162
+              C135.1 161.3 133.6 161.7 133.2 162.9"/>
+            </g>
+
+            <!-- ===== STAGE 2 · structure ===== -->
+
+            <!-- forewing: costal parallel rim -->
+            <g class="rim-fw" style="--o:3">
+              <path class="w9" pathLength="1" d="M104.6 85.6
+                C112.5 73.5 125 61.5 139.6 54.2
+                C153.5 47.4 168.5 45.3 179.8 45.8"/>
+            </g>
+
+            <!-- forewing: 7 radiating veins (straight fan, slight bow) -->
+            <g class="veins-fw" style="--o:3">
+              <path class="w9" pathLength="1" d="M105.8 84.8 C128 72.5 152 58 176 48.5"/>
+              <path class="w9" pathLength="1" d="M106.4 86.6 C130 77.5 156 68 181 62.5"/>
+              <path class="w9" pathLength="1" d="M107 88.6 C132 84 157 79.5 180.2 77.5"/>
+              <path class="w9" pathLength="1" d="M107.4 90.6 C130 90.6 155 90.5 176.8 91.5"/>
+              <path class="w9" pathLength="1" d="M107.4 92.2 C124 93.6 142 95.8 157.5 98.4"/>
+              <path class="w9" pathLength="1" d="M107 93.4 C118 95 130 97.4 140.9 99.8"/>
+              <path class="w9" pathLength="1" d="M106.4 94.2 C112.5 95.2 119 96.4 124.9 97.7"/>
+            </g>
+
+            <!-- forewing: scalloped inner margin band (outer rim + cusped arcs between veins) -->
+            <g class="band-fw" style="--o:4">
+              <path class="w9" pathLength="1" d="M180.9 47.9
+                C181.4 55.5 181 64 180.2 71.5
+                C179.6 78 178.6 84.5 177 90.3
+                C173.4 93.4 170.4 93.8 168.2 92.6
+                C164.8 95.4 161 95.8 158.2 94.4
+                C154.4 96.8 150.4 97.2 147.4 95.8
+                C143.6 97.4 139.6 97.6 136.6 96.2
+                C132.8 97.4 128.8 97.2 125.8 95.6
+                C122.4 96.6 118.8 96.2 116.2 94.6
+                C113.4 94.8 111 94 109.4 92.6"/>
+            </g>
+
+            <!-- hindwing: 7 radiating veins (spoke fan) -->
+            <g class="veins-hw" style="--o:3">
+              <path class="w9" pathLength="1" d="M107.8 101.8 C127 104.5 147 107.5 164.6 112.2"/>
+              <path class="w9" pathLength="1" d="M108.4 103.2 C127 108 145.5 113.5 161.8 120.6"/>
+              <path class="w9" pathLength="1" d="M108.8 104.8 C126 112 143.5 120 159.4 129.2"/>
+              <path class="w9" pathLength="1" d="M108.8 106.6 C124.5 116.5 140.5 127 155.8 138.2"/>
+              <path class="w9" pathLength="1" d="M108.4 108.4 C122.5 120 136.5 132.5 151.2 147"/>
+              <path class="w9" pathLength="1" d="M107.8 110 C119.5 123 131 137.5 144.6 156.2"/>
+              <path class="w9" pathLength="1" d="M107 111.4 C115.5 124.5 124.5 139 134.2 154.8"/>
+            </g>
+
+            <!-- hindwing: stained-glass cell band (cusped arcs between vein tips) -->
+            <g class="cells-hw" style="--o:4">
+              <path class="w9" pathLength="1" d="M159.8 110.9
+                C157.2 113.2 156 116 157 118.5
+                C154.8 122.2 153.6 124.6 154.6 126.6
+                C151.8 130.4 150.4 132.8 151 134.8
+                C147.6 138.8 145.8 141 146.6 143.2
+                C142.6 147.2 140.4 149.4 140.4 151.6
+                C136.2 153.8 133.4 152.8 130.9 150.9"/>
+            </g>
+
+            <!-- ===== STAGE 3 · ornament ===== -->
+
+            <!-- forewing ornament: almond eyespot at tip, ringed spot, dots, paisley, band petals -->
+            <g class="orn-fw" style="--o:5">
+              <path class="w9" pathLength="1" d="M149.8 63.2 A2.5 2.5 0 1 0 154.8 63.2 A2.5 2.5 0 1 0 149.8 63.2"/>
+              <path class="w9" pathLength="1" d="M151.4 63.2 A0.9 0.9 0 1 0 153.2 63.2 A0.9 0.9 0 1 0 151.4 63.2"/>
+              <path class="w9" pathLength="1" d="M144.1 49.8 A1.9 1.9 0 1 0 147.9 49.8 A1.9 1.9 0 1 0 144.1 49.8"/>
+              <path class="w9" pathLength="1" d="M140.65 66.2 A0.55 0.55 0 1 0 141.75 66.2 A0.55 0.55 0 1 0 140.65 66.2"/>
+              <path class="w9" pathLength="1" d="M142.25 69.6 A0.55 0.55 0 1 0 143.35 69.6 A0.55 0.55 0 1 0 142.25 69.6"/>
+              <path class="w9" pathLength="1" d="M143.95 72.8 A0.55 0.55 0 1 0 145.05 72.8 A0.55 0.55 0 1 0 143.95 72.8"/>
+              <path class="w9" pathLength="1" d="M137.9 66.3
+                C140 68.9 139.8 72.5 137.3 74.4
+                C134.8 76.3 131.4 75.7 129.8 73.4
+                C128.6 71.6 129.2 69.2 131.1 68.1
+                C132.6 67.2 134.5 67.7 135.3 69.2
+                C135.9 70.4 135.4 71.9 134.2 72.5"/>
+              <path class="w9" pathLength="1" d="M165.8 95 Q168 92.2 170.2 94.6"/>
+              <path class="w9" pathLength="1" d="M154.8 97.4 Q157 94.6 159.2 97"/>
+              <path class="w9" pathLength="1" d="M143.8 98.6 Q146 95.8 148.2 98.2"/>
+              <path class="w9" pathLength="1" d="M132.8 98.4 Q135 95.6 137.2 98"/>
+              <path class="w9" pathLength="1" d="M121.8 96.9 Q124 94.2 126.2 96.6"/>
+              <path class="w9" pathLength="1" d="M160.6 97.3 C161.6 95.5 163.6 95.3 164.4 96.7"/>
+              <path class="w9" pathLength="1" d="M127.6 97.5 C128.6 95.7 130.6 95.5 131.4 96.9"/>
+              <path class="w9" pathLength="1" d="M125.55 59 A0.45 0.45 0 1 0 126.45 59 A0.45 0.45 0 1 0 125.55 59"/>
+              <path class="w9" pathLength="1" d="M131.55 56.4 A0.45 0.45 0 1 0 132.45 56.4 A0.45 0.45 0 1 0 131.55 56.4"/>
+              <path class="w9" pathLength="1" d="M137.55 54.2 A0.45 0.45 0 1 0 138.45 54.2 A0.45 0.45 0 1 0 137.55 54.2"/>
+              <path class="w9" pathLength="1" d="M145.5 58.8 A1 1 0 1 0 147.5 58.8 A1 1 0 1 0 145.5 58.8"/>
+            </g>
+
+            <!-- hindwing ornament: eyespot chain (big double-ring low), lobe lace arcs, dots -->
+            <g class="orn-hw" style="--o:5">
+              <path class="w9" pathLength="1" d="M138.9 106.5 A2.1 2.1 0 1 0 143.1 106.5 A2.1 2.1 0 1 0 138.9 106.5"/>
+              <path class="w9" pathLength="1" d="M140.5 106.5 A0.5 0.5 0 1 0 141.5 106.5 A0.5 0.5 0 1 0 140.5 106.5"/>
+              <path class="w9" pathLength="1" d="M135.1 117.5 A2.9 2.9 0 1 0 140.9 117.5 A2.9 2.9 0 1 0 135.1 117.5"/>
+              <path class="w9" pathLength="1" d="M136.4 117.5 A1.6 1.6 0 1 0 139.6 117.5 A1.6 1.6 0 1 0 136.4 117.5"/>
+              <path class="w9" pathLength="1" d="M130 129 A3.5 3.5 0 1 0 137 129 A3.5 3.5 0 1 0 130 129"/>
+              <path class="w9" pathLength="1" d="M131.5 129 A2 2 0 1 0 135.5 129 A2 2 0 1 0 131.5 129"/>
+              <path class="w9" pathLength="1" d="M121.8 140.5 A5.2 5.2 0 1 0 132.2 140.5 A5.2 5.2 0 1 0 121.8 140.5"/>
+              <path class="w9" pathLength="1" d="M123.6 140.5 A3.4 3.4 0 1 0 130.4 140.5 A3.4 3.4 0 1 0 123.6 140.5"/>
+              <path class="w9" pathLength="1" d="M124.3 141.6 A1.9 1.9 0 1 0 128.1 141.6 A1.9 1.9 0 1 0 124.3 141.6"/>
+              <path class="w9" pathLength="1" d="M166.2 113.9 C165.4 115.9 163.9 117.2 161.9 117.6"/>
+              <path class="w9" pathLength="1" d="M164.8 121.4 C164.4 123.4 162.9 125 160.7 125.7"/>
+              <path class="w9" pathLength="1" d="M164.6 129.4 C164.2 131.5 162.6 133.2 160.3 133.9"/>
+              <path class="w9" pathLength="1" d="M162.7 137.5 C162.2 139.5 160.6 141 158.3 141.6"/>
+              <path class="w9" pathLength="1" d="M159.9 145.3 C159.3 147.2 157.7 148.6 155.5 149.2"/>
+              <path class="w9" pathLength="1" d="M120.95 146.5 A0.55 0.55 0 1 0 122.05 146.5 A0.55 0.55 0 1 0 120.95 146.5"/>
+              <path class="w9" pathLength="1" d="M123.45 148.8 A0.55 0.55 0 1 0 124.55 148.8 A0.55 0.55 0 1 0 123.45 148.8"/>
+              <path class="w9" pathLength="1" d="M126.45 150.4 A0.55 0.55 0 1 0 127.55 150.4 A0.55 0.55 0 1 0 126.45 150.4"/>
+              <path class="w9" pathLength="1" d="M113 103.4
+                C116.6 102.6 119.4 104.3 119.6 106.9
+                C119.8 109 118 110.6 116.1 110.2
+                C114.6 109.9 113.8 108.4 114.5 107.1"/>
+              <path class="w9" pathLength="1" d="M111 81.5
+                C108.6 79.6 108.4 76.6 110.4 74.9
+                C112.2 73.4 114.9 74 115.9 76
+                C116.7 77.6 115.9 79.5 114.2 80"/>
+              <path class="w9" pathLength="1" d="M150.5 152.5
+                C152.8 151.3 155 152 155.7 154
+                C156.3 155.7 155.3 157.4 153.6 157.8"/>
+              <path class="w9" pathLength="1" d="M145.55 120.5 A0.5 0.5 0 1 0 146.55 120.5 A0.5 0.5 0 1 0 145.55 120.5"/>
+              <path class="w9" pathLength="1" d="M148.05 126 A0.5 0.5 0 1 0 149.05 126 A0.5 0.5 0 1 0 148.05 126"/>
+              <path class="w9" pathLength="1" d="M149.55 131.5 A0.5 0.5 0 1 0 150.55 131.5 A0.5 0.5 0 1 0 149.55 131.5"/>
+              <path class="w9" pathLength="1" d="M119.95 119.6 A0.45 0.45 0 1 0 120.85 119.6 A0.45 0.45 0 1 0 119.95 119.6"/>
+              <path class="w9" pathLength="1" d="M121.35 120.2 A0.45 0.45 0 1 0 122.25 120.2 A0.45 0.45 0 1 0 121.35 120.2"/>
+              <path class="w9" pathLength="1" d="M120.35 121.4 A0.45 0.45 0 1 0 121.25 121.4 A0.45 0.45 0 1 0 120.35 121.4"/>
+              <path class="w9" pathLength="1" d="M148.45 155.9 A0.45 0.45 0 1 0 149.35 155.9 A0.45 0.45 0 1 0 148.45 155.9"/>
+              <path class="w9" pathLength="1" d="M145.95 157.7 A0.45 0.45 0 1 0 146.85 157.7 A0.45 0.45 0 1 0 145.95 157.7"/>
+            </g>
+        </g>
+        <g class="hf" id="halfL" transform="translate(200,0) scale(-1,1)"></g>
+
+        <!-- ============ BODY + ANTENNAE (centered, not mirrored) ============ -->
+        <g class="bd" style="--o:0">
+          <!-- head -->
+          <path class="w14" pathLength="1" d="M100 81.2
+            C101.3 81.2 102.4 82.3 102.4 83.6
+            C102.4 84.9 101.3 86 100 86
+            C98.7 86 97.6 84.9 97.6 83.6
+            C97.6 82.3 98.7 81.2 100 81.2 Z"/>
+          <!-- thorax (pointed oval) -->
+          <path class="w14" pathLength="1" d="M100 86.6
+            C102.6 88.4 103.6 92 103.4 95.5
+            C103.3 99 102 102 100 103.6
+            C98 102 96.7 99 96.6 95.5
+            C96.4 92 97.4 88.4 100 86.6 Z"/>
+          <!-- abdomen taper -->
+          <path class="w14" pathLength="1" d="M100 103.6
+            C102.2 105.5 103 110 102.7 115
+            C102.4 121 101.5 127.5 100 133.8
+            C98.5 127.5 97.6 121 97.3 115
+            C97 110 97.8 105.5 100 103.6 Z"/>
+          <!-- stage 3 · head eyes, thorax dotted line, 9 abdomen segment ticks, tip drop -->
+          <g class="orn-bd" style="--o:5">
+            <path class="w9" pathLength="1" d="M98.25 82.7 A0.65 0.65 0 1 0 99.55 82.7 A0.65 0.65 0 1 0 98.25 82.7"/>
+            <path class="w9" pathLength="1" d="M100.45 82.7 A0.65 0.65 0 1 0 101.75 82.7 A0.65 0.65 0 1 0 100.45 82.7"/>
+            <path class="w9" pathLength="1" d="M99.6 90 A0.4 0.4 0 1 0 100.4 90 A0.4 0.4 0 1 0 99.6 90"/>
+            <path class="w9" pathLength="1" d="M99.6 92.7 A0.4 0.4 0 1 0 100.4 92.7 A0.4 0.4 0 1 0 99.6 92.7"/>
+            <path class="w9" pathLength="1" d="M99.6 95.4 A0.4 0.4 0 1 0 100.4 95.4 A0.4 0.4 0 1 0 99.6 95.4"/>
+            <path class="w9" pathLength="1" d="M99.6 98.1 A0.4 0.4 0 1 0 100.4 98.1 A0.4 0.4 0 1 0 99.6 98.1"/>
+            <path class="w9" pathLength="1" d="M97.5 106.3 Q100 107.9 102.5 106.3"/>
+            <path class="w9" pathLength="1" d="M97.6 109.4 Q100 111 102.4 109.4"/>
+            <path class="w9" pathLength="1" d="M97.75 112.5 Q100 114 102.25 112.5"/>
+            <path class="w9" pathLength="1" d="M97.95 115.6 Q100 117.1 102.05 115.6"/>
+            <path class="w9" pathLength="1" d="M98.15 118.7 Q100 120.1 101.85 118.7"/>
+            <path class="w9" pathLength="1" d="M98.4 121.8 Q100 123.1 101.6 121.8"/>
+            <path class="w9" pathLength="1" d="M98.65 124.9 Q100 126.1 101.35 124.9"/>
+            <path class="w9" pathLength="1" d="M98.9 127.7 Q100 128.8 101.1 127.7"/>
+            <path class="w9" pathLength="1" d="M99.15 130.4 Q100 131.4 100.85 130.4"/>
+            <path class="w9" pathLength="1" d="M100 132.2 Q100.9 133.4 100 134.6 Q99.1 133.4 100 132.2"/>
+          </g>
+
+          <!-- right antenna: lyre-curved stalk + tight paisley curl -->
+          <path class="w9" pathLength="1" d="M101.3 81.3
+            C102.5 73 103.5 64 106.5 56.5
+            C109 50.5 113.5 45.8 118.6 43.6
+            C121.6 42.3 125.4 41.4 126.9 43.5
+            C128.3 45.5 126.9 48.2 124.4 48.1
+            C122.5 48 121.4 46.5 122 45
+            C122.4 44 123.5 43.6 124.3 44.2"/>
+          <!-- left antenna -->
+          <path class="w9" pathLength="1" d="M98.7 81.3
+            C97.5 73 96.5 64 93.5 56.5
+            C91 50.5 86.5 45.8 81.4 43.6
+            C78.4 42.3 74.6 41.4 73.1 43.5
+            C71.7 45.5 73.1 48.2 75.6 48.1
+            C77.5 48 78.6 46.5 78 45
+            C77.6 44 76.5 43.6 75.7 44.2"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="panel">
+      <span>Reference (PNG)</span>
+      <img class="art" src="reference/butterfly.png" alt="Gold line-art butterfly reference">
+    </div>
+  </div>
+
+  <button id="replay" type="button">Replay draw-on</button>
+
+<script>
+  // mirror the authored right half into the left group (real nodes, so CSS + animations apply)
+  document.getElementById('halfL').innerHTML = document.getElementById('halfR').innerHTML;
+
+  // draw on at load (reduced-motion users see it fully drawn via the media query)
+  requestAnimationFrame(function(){ document.getElementById('bfly').classList.add('play'); });
+
+  // wired now; re-triggers the stage-4 draw-on animation once it exists
+  document.getElementById('replay').addEventListener('click', function(){
+    var svg = document.getElementById('bfly');
+    svg.classList.remove('play');
+    void svg.getBoundingClientRect(); // reflow so animations restart
+    svg.classList.add('play');
+  });
+</script>
+</body>
+</html>
