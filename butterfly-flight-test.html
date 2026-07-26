@@ -49,7 +49,7 @@
   .bft .w9{stroke-width:.9}
   .bft.play path{animation:draw .9s cubic-bezier(.33,1,.68,1) forwards; animation-delay:calc(var(--o,0)*.22s)}
   @keyframes draw{to{stroke-dashoffset:0}}
-  .bft .wash path{stroke:none; stroke-dasharray:none; stroke-dashoffset:0; fill:#C9B8E8; opacity:0}
+  .bft .wash path{stroke:none; stroke-dasharray:none; stroke-dashoffset:0; fill:#B9A3E0; opacity:0}
   .bft.play .wash path{animation:washIn .6s ease forwards; animation-delay:2.1s}
   @keyframes washIn{to{opacity:var(--op,.15)}}
   .bft.drawn path{stroke-dashoffset:0; animation:none}
@@ -90,13 +90,18 @@
   <div class="flyer on" id="hero" aria-hidden="true">
     <svg class="bft" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <g class="flapper"><g class="hf half-src">
-        <g class="wash" style="--op:.14">
+        <g class="wash" style="--op:.11">
+          <path pathLength="1" d="M106 102 C118 101 140 103 152 106 C162 109 166 112 166 116 C165 126 161 138 154 148 C148 156 141 162 136 163 C128 158 120 149 114 138 C109 128 105.5 114 106 102 Z"/>
+        </g>
+        <g class="wash" style="--op:.32">
+          <path pathLength="1" d="M118 68.5 C124 60 146 52 158 49.5 C161.5 48.8 163 51 160.5 53.5 C150 58 132 66.5 122.5 72 C119.5 73.7 117.5 71.5 118 68.5 Z"/>
           <path pathLength="1" d="M134.5 65 C140 57.5 160 53.5 166 58 C169 60.3 165 66.5 156 69.5 C147 72.4 136.5 70.5 134.5 65 Z"/>
+          <path pathLength="1" d="M152 74 C160 70 172 68 177 70.5 C179.5 72 178.5 76.5 174 79 C166 83 156 85.5 151 84 C148 83 148.5 78 152 74 Z"/>
           <path pathLength="1" d="M125 87.5 C130 80.5 158 79 164 84 C167 86.6 160 92.5 149 93.6 C138 94.6 127 92.5 125 87.5 Z"/>
           <path pathLength="1" d="M122 119 C124 111 143 108 149 112.5 C152.5 115 147 122.5 138 124.5 C130 126.3 123.5 124 122 119 Z"/>
           <path pathLength="1" d="M117 134 C120 127.5 132 125.5 137 129 C140.4 131.4 136 138.5 128.5 141 C122 143.1 117.5 139.5 117 134 Z"/>
         </g>
-        <g class="wash" style="--op:.18">
+        <g class="wash" style="--op:.4">
           <path pathLength="1" d="M150.7 63.2 A1.6 1.6 0 1 0 153.9 63.2 A1.6 1.6 0 1 0 150.7 63.2 Z"/>
           <path pathLength="1" d="M139.8 106.5 A1.2 1.2 0 1 0 142.2 106.5 A1.2 1.2 0 1 0 139.8 106.5 Z"/>
           <path pathLength="1" d="M136.4 117.5 A1.6 1.6 0 1 0 139.6 117.5 A1.6 1.6 0 1 0 136.4 117.5 Z"/>
@@ -353,51 +358,60 @@
     { transform:'translate(0,0) rotate(0deg) scale(1)',                                         offset:1   }
   ], {duration:HERO_DUR, delay:FLY_AT, easing:'ease-in-out', fill:'forwards'});
 
-  // 3 minis EMERGE from the hero's spot as it lifts, then peel onto margin lanes
-  // (1 left, 2 right); all exit off the sides/bottom
-  var minis = [
-    {side:'L', scale:.26, sideExit:0,   delay:FLY_AT+150, dur:3600, dir:1,  fl:'.46s'},
-    {side:'R', scale:.30, sideExit:.4,  delay:FLY_AT+400, dur:3400, dir:-1, fl:'.52s'},
-    {side:'R', scale:.22, sideExit:0,   delay:FLY_AT+650, dur:3700, dir:-1, fl:'.42s'}
+  // 3 minis (2x bigger) emerge from the hero, sweep diagonally ACROSS the page
+  // with a loop each (cw / ccw / wide lazy), and land around the affordance
+  var moreEl=document.querySelector('.more');
+  var span=moreEl.querySelector('span').getBoundingClientRect();
+  var moreTop=moreEl.getBoundingClientRect().top;
+  function landSpot(kind,w){
+    var lx,ly;
+    if(kind==='left'){ lx=span.left-w/2-10; ly=span.top+span.height/2-6; }
+    else if(kind==='right'){ lx=span.right+w/2+10; ly=span.top+span.height/2-6; }
+    else { lx=W*.5+30; ly=moreTop-w/2-10; }
+    lx=Math.max(w/2+4, Math.min(W-w/2-4, lx));
+    return [lx,ly];
+  }
+  var minis=[
+    {scale:.52, delay:FLY_AT+150, dur:3800, spin:1,  loopR:30, land:'left',  fl:'.5s',  tilt:-6},
+    {scale:.60, delay:FLY_AT+450, dur:4200, spin:-1, loopR:36, land:'right', fl:'.56s', tilt:5},
+    {scale:.44, delay:FLY_AT+750, dur:4600, spin:-1, loopR:50, land:'above', fl:'.44s', tilt:-3}
   ];
 
   minis.forEach(function(m){
-    var gap = (m.side==='L') ? L : (W-R);
-    var w = Math.min(heroW*m.scale, (gap-4)/1.24); // 1.24 = AABB slack for tilt
-    var laneCx = (m.side==='L') ? L/2 : R + gap/2;
-    var sway = Math.max(1.5, (gap - w*1.24)/2 - 1) * (m.side==='L' ? 1 : -1);
-    var d = document.createElement('div');
-    d.className = 'flyer on';
+    var w=heroW*m.scale;
+    var d=document.createElement('div');
+    d.className='flyer on';
     d.setAttribute('aria-hidden','true');
-    d.style.width = w+'px';
-    d.style.left = (heroCx - w/2)+'px';      // spawn AT the hero's spot
-    d.style.top = (heroCy - w/2)+'px';
-    d.style.opacity = '0';
-    d.style.setProperty('--fl', m.fl);
-    var svg = heroSvg.cloneNode(true);
+    d.style.width=w+'px';
+    d.style.left=(heroCx-w/2)+'px';        // spawn AT the hero's spot
+    d.style.top=(heroCy-w/2)+'px';
+    d.style.opacity='0';
+    d.style.setProperty('--fl',m.fl);
+    var svg=heroSvg.cloneNode(true);
     svg.classList.remove('play');
-    svg.classList.add('drawn');              // minis are already inked
+    svg.classList.add('drawn');            // minis are already inked
     d.appendChild(svg);
     document.body.appendChild(d);
-    var laneDx = laneCx - heroCx;
-    var drop = H + 2.8*w;
-    var laneY = Math.max(0, .09*H - (heroCy - w/2)); // lane entry height: box bottom stays above the Bismillah
-    var emerge = 300 / m.dur;                // 0.3s scale/fade-in at the hero's spot
-    var frames = [
-      { opacity:0, transform:'translate(0,0) rotate(0deg) scale(.6)',                                   offset:0 },
-      { opacity:1, transform:'translate('+(laneDx*.2)+'px,'+(laneY*.3)+'px) rotate('+(6*m.dir)+'deg) scale(1)', offset:emerge },
-      { opacity:1, transform:'translate('+laneDx+'px,'+laneY+'px) rotate('+(12*m.dir)+'deg) scale(1)',  offset:.30 }
+    var spot=landSpot(m.land,w);
+    var dx=spot[0]-heroCx, dy=spot[1]-heroCy;
+    var lcx=dx*.55+m.spin*40, lcy=dy*.52;  // loop centre, offset to one side
+    var r=m.loopR, sp=m.spin;
+    function T(x,y,rot,sc){return 'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+rot+'deg) scale('+sc+')';}
+    var frames=[
+      { opacity:0, transform:T(0,0,0,.6),                          offset:0 },
+      { opacity:1, transform:T(dx*.06,dy*.04,8*sp,1),              offset:300/m.dur },
+      { opacity:1, transform:T(dx*.28+sp*30,dy*.22,14*sp,1),       offset:.28 },
+      { opacity:1, transform:T(lcx+r,lcy,10*sp,1),                 offset:.40 },
+      { opacity:1, transform:T(lcx,lcy+sp*r,18*sp,1),              offset:.48 },
+      { opacity:1, transform:T(lcx-r,lcy,8*sp,1),                  offset:.56 },
+      { opacity:1, transform:T(lcx,lcy-sp*r,-6*sp,1),              offset:.64 },
+      { opacity:1, transform:T(lcx+r*.7,lcy+sp*r*.4,6*sp,1),       offset:.71 },
+      { opacity:1, transform:T(dx*.85,dy*.86,10*sp,1),             offset:.85 },
+      { opacity:1, transform:T(dx,dy,m.tilt,1),                    offset:1 }
     ];
-    if (m.sideExit){
-      frames.push({ opacity:1, transform:'translate('+(laneDx+sway)+'px,'+(.34*drop)+'px) rotate('+(16*m.dir)+'deg) scale(1)', offset:.62 });
-      frames.push({ opacity:1, transform:'translate('+(laneDx + m.dir*-1*m.sideExit*W)+'px,'+(.5*drop)+'px) rotate('+(24*m.dir)+'deg) scale(1)', offset:1 });
-    } else {
-      frames.push({ opacity:1, transform:'translate('+(laneDx+sway)+'px,'+(.42*drop)+'px) rotate('+(15*m.dir)+'deg) scale(1)', offset:.60 });
-      frames.push({ opacity:1, transform:'translate('+(laneDx-sway)+'px,'+(.74*drop)+'px) rotate('+(6*m.dir)+'deg) scale(1)',  offset:.82 });
-      frames.push({ opacity:1, transform:'translate('+(laneDx+sway*.5)+'px,'+(1.04*drop)+'px) rotate('+(13*m.dir)+'deg) scale(1)', offset:1 });
-    }
-    d.animate(frames, {duration:m.dur, delay:m.delay, easing:'ease-in-out', fill:'both'});
+    var anim=d.animate(frames,{duration:m.dur,delay:m.delay,easing:'ease-in-out',fill:'both'});
     setTimeout(function(){ d.classList.add('flying'); }, m.delay);
+    anim.onfinish=function(){ d.classList.add('resting'); d.classList.remove('flying'); };
   });
 
   setTimeout(function(){ hero.classList.add('flying'); }, FLY_AT);

@@ -76,7 +76,7 @@
   .gbfly.play path{animation:gdraw .9s cubic-bezier(.33,1,.68,1) forwards;
     animation-delay:calc(var(--o,0) * .22s)}
   @keyframes gdraw{to{stroke-dashoffset:0}}
-  .gbfly .wash path{stroke:none; stroke-dasharray:none; stroke-dashoffset:0; fill:#C9B8E8; opacity:0}
+  .gbfly .wash path{stroke:none; stroke-dasharray:none; stroke-dashoffset:0; fill:#B9A3E0; opacity:0}
   .gbfly.play .wash path{animation:gwashIn .6s ease forwards; animation-delay:2.1s}
   @keyframes gwashIn{to{opacity:var(--op,.15)}}
   .gbfly.drawn path{stroke-dashoffset:0; animation:none}
@@ -153,6 +153,10 @@
   .rsvp-btn[disabled]{opacity:.55; cursor:default}
   .rsvp-note{font-family:var(--disp); font-style:italic; font-size:clamp(15px,4vw,17px);
     color:#8A7B66; margin-top:14px}
+  .rsvp-deadline{font-family:var(--disp); font-style:italic; font-size:clamp(16px,4.5vw,19px);
+    color:#7A2E2E; margin-top:8px}
+  .form-deadline{font-family:var(--disp); font-size:14px; color:#6B5E4E;
+    margin-top:16px; text-align:center}
   .rsvp-form{width:min(80%,340px); margin:10px auto 0; text-align:left}
   .field{margin-top:16px}
   .field-row{display:flex; gap:12px; align-items:flex-end}
@@ -204,13 +208,18 @@
   <template id="bflyTemplate">
     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <g class="flapper"><g class="hf half-src">
-        <g class="wash" style="--op:.14">
+        <g class="wash" style="--op:.11">
+          <path pathLength="1" d="M106 102 C118 101 140 103 152 106 C162 109 166 112 166 116 C165 126 161 138 154 148 C148 156 141 162 136 163 C128 158 120 149 114 138 C109 128 105.5 114 106 102 Z"/>
+        </g>
+        <g class="wash" style="--op:.32">
+          <path pathLength="1" d="M118 68.5 C124 60 146 52 158 49.5 C161.5 48.8 163 51 160.5 53.5 C150 58 132 66.5 122.5 72 C119.5 73.7 117.5 71.5 118 68.5 Z"/>
           <path pathLength="1" d="M134.5 65 C140 57.5 160 53.5 166 58 C169 60.3 165 66.5 156 69.5 C147 72.4 136.5 70.5 134.5 65 Z"/>
+          <path pathLength="1" d="M152 74 C160 70 172 68 177 70.5 C179.5 72 178.5 76.5 174 79 C166 83 156 85.5 151 84 C148 83 148.5 78 152 74 Z"/>
           <path pathLength="1" d="M125 87.5 C130 80.5 158 79 164 84 C167 86.6 160 92.5 149 93.6 C138 94.6 127 92.5 125 87.5 Z"/>
           <path pathLength="1" d="M122 119 C124 111 143 108 149 112.5 C152.5 115 147 122.5 138 124.5 C130 126.3 123.5 124 122 119 Z"/>
           <path pathLength="1" d="M117 134 C120 127.5 132 125.5 137 129 C140.4 131.4 136 138.5 128.5 141 C122 143.1 117.5 139.5 117 134 Z"/>
         </g>
-        <g class="wash" style="--op:.18">
+        <g class="wash" style="--op:.4">
           <path pathLength="1" d="M150.7 63.2 A1.6 1.6 0 1 0 153.9 63.2 A1.6 1.6 0 1 0 150.7 63.2 Z"/>
           <path pathLength="1" d="M139.8 106.5 A1.2 1.2 0 1 0 142.2 106.5 A1.2 1.2 0 1 0 139.8 106.5 Z"/>
           <path pathLength="1" d="M136.4 117.5 A1.6 1.6 0 1 0 139.6 117.5 A1.6 1.6 0 1 0 136.4 117.5 Z"/>
@@ -454,6 +463,7 @@
 
       <button class="rsvp-btn" id="rsvpOpen" type="button">RSVP</button>
       <p class="rsvp-note" id="rsvpNote">Kindly respond at your earliest convenience</p>
+      <p class="rsvp-deadline" id="rsvpDeadline">Please RSVP by August 5th</p>
 
       <form class="rsvp-form" id="rsvpForm" hidden novalidate>
         <div class="field">
@@ -475,6 +485,7 @@
           <input id="rsvpPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required>
         </div>
         <p class="rsvp-err" id="rsvpErr" hidden></p>
+        <p class="form-deadline">Please RSVP by August 5th</p>
         <button class="rsvp-btn" id="rsvpSubmit" type="submit">Submit</button>
       </form>
 
@@ -559,8 +570,32 @@
     var fired=false;
     function done(){ if(fired) return; fired=true; document.dispatchEvent(new CustomEvent('butterfliesDone')); }
 
+    function placeRestingMinis(){ // reduced-motion end state: minis already at rest
+      var W=innerWidth;
+      var sr=scene.getBoundingClientRect();
+      var heroW=hero.getBoundingClientRect().width;
+      var moreEl=scene.querySelector('.more');
+      if(!moreEl) return;
+      var spanR=moreEl.querySelector('span').getBoundingClientRect();
+      var moreTop=moreEl.getBoundingClientRect().top;
+      [{scale:.52,land:'left',tilt:-6},{scale:.60,land:'right',tilt:5},{scale:.44,land:'above',tilt:-3}].forEach(function(m){
+        var w=heroW*m.scale, lx, ly;
+        if(m.land==='left'){ lx=spanR.left-w/2-10; ly=spanR.top+spanR.height/2-6; }
+        else if(m.land==='right'){ lx=spanR.right+w/2+10; ly=spanR.top+spanR.height/2-6; }
+        else { lx=W*.5+30; ly=moreTop-w/2-10; }
+        lx=Math.max(w/2+4, Math.min(W-w/2-4, lx));
+        var d=makeBfly();
+        d.classList.add('on','drawn','resting');
+        d.style.width=w+'px';
+        d.style.left=(lx-w/2-sr.left)+'px';
+        d.style.top=(ly-w/2-sr.top)+'px';
+        d.style.transform='rotate('+m.tilt+'deg)';
+        scene.appendChild(d);
+      });
+    }
+
     document.addEventListener('envelopeOpened', function(){
-      if(reduce){ setTimeout(done,1200); return; }
+      if(reduce){ placeRestingMinis(); setTimeout(done,1200); return; }
       setTimeout(start,350); // let the white-out thin before the ink starts
     }, {once:true});
 
@@ -599,17 +634,28 @@
         setTimeout(done, HERO_DUR+200);
       }, FLY_AT);
 
-      // 3 minis emerge from the hero's spot as it lifts, peel onto the margin lanes
+      // 3 minis (2x bigger) emerge from the hero, sweep diagonally across the
+      // page with a loop each (cw / ccw / wide lazy), and settle around the
+      // tap-for-more affordance — beside it, never on its text
+      var moreEl=scene.querySelector('.more');
+      var spanR=moreEl?moreEl.querySelector('span').getBoundingClientRect():null;
+      var moreTop=moreEl?moreEl.getBoundingClientRect().top:H-140;
+      function landSpot(kind,w){
+        var lx,ly;
+        if(!spanR){ lx=W*.5; ly=H-140; }
+        else if(kind==='left'){ lx=spanR.left-w/2-10; ly=spanR.top+spanR.height/2-6; }
+        else if(kind==='right'){ lx=spanR.right+w/2+10; ly=spanR.top+spanR.height/2-6; }
+        else { lx=W*.5+30; ly=moreTop-w/2-10; }
+        lx=Math.max(w/2+4, Math.min(W-w/2-4, lx));
+        return [lx,ly];
+      }
       var minis=[
-        {side:'L', scale:.26, sideExit:0,  delay:FLY_AT+150, dur:3600, dir:1,  fl:'.46s'},
-        {side:'R', scale:.30, sideExit:.4, delay:FLY_AT+400, dur:3400, dir:-1, fl:'.52s'},
-        {side:'R', scale:.22, sideExit:0,  delay:FLY_AT+650, dur:3700, dir:-1, fl:'.42s'}
+        {scale:.52, delay:FLY_AT+150, dur:3800, spin:1,  loopR:30, land:'left',  fl:'.5s',  tilt:-6},
+        {scale:.60, delay:FLY_AT+450, dur:4200, spin:-1, loopR:36, land:'right', fl:'.56s', tilt:5},
+        {scale:.44, delay:FLY_AT+750, dur:4600, spin:-1, loopR:50, land:'above', fl:'.44s', tilt:-3}
       ];
       minis.forEach(function(m){
-        var gap=(m.side==='L')?L:(W-R);
-        var w=Math.min(heroW*m.scale,(gap-4)/1.24);
-        var laneCx=(m.side==='L')?L/2:R+gap/2;
-        var sway=Math.max(1.5,(gap-w*1.24)/2-1)*(m.side==='L'?1:-1);
+        var w=heroW*m.scale;
         var d=makeBfly();
         d.classList.add('on','drawn');
         d.style.width=w+'px';
@@ -618,26 +664,26 @@
         d.style.opacity='0';
         d.style.setProperty('--fl',m.fl);
         scene.appendChild(d);
-        var laneDx=laneCx-heroCx;
-        var drop=H+2.8*w;
-        var laneY=Math.max(0,.09*H-(heroCy-w/2));
-        var emerge=300/m.dur;
+        var spot=landSpot(m.land,w);
+        var dx=spot[0]-heroCx, dy=spot[1]-heroCy;
+        var lcx=dx*.55+m.spin*40, lcy=dy*.52;
+        var r=m.loopR, sp=m.spin;
+        function T(x,y,rot,sc){return 'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+rot+'deg) scale('+sc+')';}
         var frames=[
-          { opacity:0, transform:'translate(0,0) rotate(0deg) scale(.6)', offset:0 },
-          { opacity:1, transform:'translate('+(laneDx*.2)+'px,'+(laneY*.3)+'px) rotate('+(6*m.dir)+'deg) scale(1)', offset:emerge },
-          { opacity:1, transform:'translate('+laneDx+'px,'+laneY+'px) rotate('+(12*m.dir)+'deg) scale(1)', offset:.30 }
+          { opacity:0, transform:T(0,0,0,.6),                    offset:0 },
+          { opacity:1, transform:T(dx*.06,dy*.04,8*sp,1),        offset:300/m.dur },
+          { opacity:1, transform:T(dx*.28+sp*30,dy*.22,14*sp,1), offset:.28 },
+          { opacity:1, transform:T(lcx+r,lcy,10*sp,1),           offset:.40 },
+          { opacity:1, transform:T(lcx,lcy+sp*r,18*sp,1),        offset:.48 },
+          { opacity:1, transform:T(lcx-r,lcy,8*sp,1),            offset:.56 },
+          { opacity:1, transform:T(lcx,lcy-sp*r,-6*sp,1),        offset:.64 },
+          { opacity:1, transform:T(lcx+r*.7,lcy+sp*r*.4,6*sp,1), offset:.71 },
+          { opacity:1, transform:T(dx*.85,dy*.86,10*sp,1),       offset:.85 },
+          { opacity:1, transform:T(dx,dy,m.tilt,1),              offset:1 }
         ];
-        if(m.sideExit){
-          frames.push({ opacity:1, transform:'translate('+(laneDx+sway)+'px,'+(.34*drop)+'px) rotate('+(16*m.dir)+'deg) scale(1)', offset:.62 });
-          frames.push({ opacity:1, transform:'translate('+(laneDx+m.dir*-1*m.sideExit*W)+'px,'+(.5*drop)+'px) rotate('+(24*m.dir)+'deg) scale(1)', offset:1 });
-        }else{
-          frames.push({ opacity:1, transform:'translate('+(laneDx+sway)+'px,'+(.42*drop)+'px) rotate('+(15*m.dir)+'deg) scale(1)', offset:.60 });
-          frames.push({ opacity:1, transform:'translate('+(laneDx-sway)+'px,'+(.74*drop)+'px) rotate('+(6*m.dir)+'deg) scale(1)', offset:.82 });
-          frames.push({ opacity:1, transform:'translate('+(laneDx+sway*.5)+'px,'+(1.04*drop)+'px) rotate('+(13*m.dir)+'deg) scale(1)', offset:1 });
-        }
         var anim=d.animate(frames,{duration:m.dur,delay:m.delay,easing:'ease-in-out',fill:'both'});
         setTimeout(function(){ d.classList.add('flying'); }, m.delay);
-        anim.onfinish=function(){ d.remove(); };
+        anim.onfinish=function(){ d.classList.add('resting'); d.classList.remove('flying'); };
       });
     }
   })();
@@ -682,6 +728,7 @@
     open.addEventListener('click',function(e){
       e.stopPropagation();
       open.hidden=true; note.hidden=true; form.hidden=false;
+      var dl=document.getElementById('rsvpDeadline'); if(dl) dl.hidden=true;
       document.getElementById('rsvpName').focus();
     });
     function showErr(msg){ err.textContent=msg; err.hidden=false; }
