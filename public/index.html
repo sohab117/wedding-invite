@@ -152,20 +152,25 @@
   .s-dates > *:not(.sd-arch):not(.more){position:relative; z-index:1}
   /* keep the text clear of the vines that run down both edges */
   .s-dates .lbl, .sd-line, .sd-date, .sd-time, .sd-addr{max-width:min(74vw,300px); margin-inline:auto}
-  /* this scene's affordance sits higher — below y≈726 the arch's clusters close in */
-  .s-dates .more{bottom:calc(env(safe-area-inset-bottom, 0px) + 147px)}
+  /* below the illustration, but stopping before y≈726 where the arch's clusters close in
+     (and well clear of Safari's URL bar, which needs >= inset + 72px) */
+  .s-dates .more{bottom:calc(env(safe-area-inset-bottom, 0px) + 130px)}
   .s-dates .lbl{font-size:clamp(12px,3.3vw,14px)}
   .sd-line{font-family:var(--disp); font-size:clamp(17px,4.6vw,22px); color:#6B5E4E}
   .sd-date{font-family:var(--script); font-weight:400; font-size:clamp(30px,8.6vw,40px);
     line-height:1.3; color:#7A2E2E; margin-top:2px}
   .sd-time{font-family:var(--disp); font-size:clamp(16px,4.4vw,20px); color:#B8923E;
     letter-spacing:.08em}
-  .sd-divider{width:64px; height:1px; background:rgba(184,146,62,.6); margin:8px auto}
+  .sd-divider{width:64px; height:1px; background:rgba(184,146,62,.6); margin:4px auto}
   .sd-addr{font-family:var(--disp); font-size:clamp(15px,4.2vw,17px); color:#6B5E4E;
     letter-spacing:.03em; line-height:1.45; text-decoration:none; display:block}
   /* the couple animation renders through a canvas: canvas is color-managed like CSS
      (video display pipelines aren't, esp. iOS), and it gets a true alpha edge feather */
-  .cd-vid{width:min(45vw,180px); aspect-ratio:1/1; height:auto; display:block}
+  /* canvas is taller than the 1:1 video: the artwork is drawn 170px (canvas space)
+     down, leaving clear space above the groom's head, whose hair meets the source
+     frame's very top edge. Negative margin buys that room from the gap above. */
+  .cd-vid{width:min(45vw,180px); aspect-ratio:960/1130; height:auto; display:block;
+    margin-top:-8px}
   #coupleVid{position:absolute; width:2px; height:2px; opacity:0; pointer-events:none}
 
   /* 04 · rsvp (styled to match Scene 1) */
@@ -488,7 +493,7 @@
          target="_blank" rel="noopener" aria-label="Open venue address in Maps">
         1101 Airport Road<br>Lynchburg, VA 24502
       </a>
-      <canvas class="cd-vid" id="coupleCanvas" width="960" height="960" aria-hidden="true"></canvas>
+      <canvas class="cd-vid" id="coupleCanvas" width="960" height="1130" aria-hidden="true"></canvas>
       <video id="coupleVid" src="assets/couple-dua.mp4" muted playsinline preload="metadata"
              aria-hidden="true"></video>
       <div class="sd-arch" aria-hidden="true"></div>
@@ -731,23 +736,24 @@
     var v=document.getElementById('coupleVid');
     var canvas=document.getElementById('coupleCanvas');
     if(!v||!canvas) return;
-    var W=960,H=960;
+    var W=960, VH=960, TOP=170, H=VH+TOP;   // artwork drawn at y=TOP; above it stays clear
     var ctx=canvas.getContext('2d');
 
-    // alpha feather: opaque centre, edges fade to nothing (top deepest, for the hairline)
+    // alpha feather: only a light touch on the artwork's own top edge (the hair meets
+    // it), plus sides and bottom. Everything above TOP is simply never drawn.
     var mask=document.createElement('canvas'); mask.width=W; mask.height=H;
     var m=mask.getContext('2d');
     m.fillStyle='#fff'; m.fillRect(0,0,W,H);
     m.globalCompositeOperation='destination-out';
-    var FT=90, FS=48, FB=48, g;
-    g=m.createLinearGradient(0,0,0,FT);   g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,W,FT);
-    g=m.createLinearGradient(0,H,0,H-FB); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,H-FB,W,FB);
-    g=m.createLinearGradient(0,0,FS,0);   g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,FS,H);
-    g=m.createLinearGradient(W,0,W-FS,0); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(W-FS,0,FS,H);
+    var FT=22, FS=48, FB=48, g;
+    g=m.createLinearGradient(0,TOP,0,TOP+FT); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,TOP,W,FT);
+    g=m.createLinearGradient(0,H,0,H-FB);     g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,H-FB,W,FB);
+    g=m.createLinearGradient(0,0,FS,0);       g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,FS,H);
+    g=m.createLinearGradient(W,0,W-FS,0);     g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(W-FS,0,FS,H);
 
     function present(src){
       ctx.clearRect(0,0,W,H);
-      ctx.drawImage(src,0,0,W,H);
+      ctx.drawImage(src,0,TOP,W,VH);
       ctx.globalCompositeOperation='destination-in';
       ctx.drawImage(mask,0,0);
       ctx.globalCompositeOperation='source-over';
