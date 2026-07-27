@@ -136,20 +136,37 @@
   @keyframes chevBounce{0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)}}
 
   /* 03 · save the date (tightened so the couple illustration fits in 100dvh) */
+  /* sizes below are fitted to the arch's measured clear oval: blocked above scene
+     y≈169, ~180px wide at y≈210, ~242px at mid-scene, closing again below y≈726 */
   .s-dates{background:linear-gradient(180deg,#f1f0e4,#edf0e2);
-    padding:24px 30px; gap:clamp(8px,1.5dvh,14px)}
+    padding:24px 30px; gap:clamp(6px,1.1dvh,11px)}
+  /* floral arch frame — this scene only. Its paper is pure white, and white is the
+     multiply identity, so the backdrop (incl. the gradient) shows through untouched.
+     Stretched, not cover: cover would crop the side vines off a 390x844 phone. */
+  .sd-arch{position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:url('assets/floral-arch.png') center/100% 100% no-repeat;
+    mix-blend-mode:multiply;
+    /* it's a backdrop, not content: never joins the scene's staggered reveal */
+    opacity:1 !important; transform:none !important; transition:none !important}
+  /* lift content above the arch — .more excluded so it keeps its own absolute anchoring */
+  .s-dates > *:not(.sd-arch):not(.more){position:relative; z-index:1}
+  /* keep the text clear of the vines that run down both edges */
+  .s-dates .lbl, .sd-line, .sd-date, .sd-time, .sd-addr{max-width:min(74vw,300px); margin-inline:auto}
+  /* this scene's affordance sits higher — below y≈726 the arch's clusters close in */
+  .s-dates .more{bottom:calc(env(safe-area-inset-bottom, 0px) + 147px)}
   .s-dates .lbl{font-size:clamp(12px,3.3vw,14px)}
   .sd-line{font-family:var(--disp); font-size:clamp(17px,4.6vw,22px); color:#6B5E4E}
-  .sd-date{font-family:var(--script); font-weight:400; font-size:clamp(34px,10vw,46px);
-    line-height:1.35; color:#7A2E2E; margin-top:2px}
+  .sd-date{font-family:var(--script); font-weight:400; font-size:clamp(30px,8.6vw,40px);
+    line-height:1.3; color:#7A2E2E; margin-top:2px}
   .sd-time{font-family:var(--disp); font-size:clamp(16px,4.4vw,20px); color:#B8923E;
     letter-spacing:.08em}
   .sd-divider{width:64px; height:1px; background:rgba(184,146,62,.6); margin:8px auto}
   .sd-addr{font-family:var(--disp); font-size:clamp(15px,4.2vw,17px); color:#6B5E4E;
     letter-spacing:.03em; line-height:1.45; text-decoration:none; display:block}
-  /* scene tint is baked into the video itself (ffmpeg multiply) — no CSS blend/mask,
-     so Safari/WebKit always animates the frames */
-  .cd-vid{width:min(60vw,270px); aspect-ratio:1/1; height:auto; display:block}
+  /* the couple animation renders through a canvas: canvas is color-managed like CSS
+     (video display pipelines aren't, esp. iOS), and it gets a true alpha edge feather */
+  .cd-vid{width:min(45vw,180px); aspect-ratio:1/1; height:auto; display:block}
+  #coupleVid{position:absolute; width:2px; height:2px; opacity:0; pointer-events:none}
 
   /* 04 · rsvp (styled to match Scene 1) */
   .s-rsvp{background:linear-gradient(180deg,#f6f1e4,#efe7d6)}
@@ -471,9 +488,10 @@
          target="_blank" rel="noopener" aria-label="Open venue address in Maps">
         1101 Airport Road<br>Lynchburg, VA 24502
       </a>
-      <video class="cd-vid" id="coupleVid" src="assets/couple-dua.mp4"
-             poster="assets/couple-dua-poster.jpg" muted playsinline preload="metadata"
+      <canvas class="cd-vid" id="coupleCanvas" width="960" height="960" aria-hidden="true"></canvas>
+      <video id="coupleVid" src="assets/couple-dua.mp4" muted playsinline preload="metadata"
              aria-hidden="true"></video>
+      <div class="sd-arch" aria-hidden="true"></div>
     </section>
 
     <section class="scene s-rsvp">
@@ -707,29 +725,83 @@
     }
   })();
 
-  // ----- couple illustration (save-the-date) — plays once when the scene appears -----
+  // ----- couple illustration (save-the-date) — canvas-rendered, feathered edges,
+  //       plays once when the scene appears -----
   (function(){
-    var v=document.getElementById('coupleVid'); if(!v) return;
-    var played=false;
-    function toImg(){
-      if(!v.parentNode) return;
-      var img=document.createElement('img');
-      img.className='cd-vid'; img.src='assets/couple-dua-poster.jpg'; img.alt='';
-      img.setAttribute('aria-hidden','true');
-      v.parentNode.replaceChild(img,v);
+    var v=document.getElementById('coupleVid');
+    var canvas=document.getElementById('coupleCanvas');
+    if(!v||!canvas) return;
+    var W=960,H=960;
+    var ctx=canvas.getContext('2d');
+
+    // alpha feather: opaque centre, edges fade to nothing (top deepest, for the hairline)
+    var mask=document.createElement('canvas'); mask.width=W; mask.height=H;
+    var m=mask.getContext('2d');
+    m.fillStyle='#fff'; m.fillRect(0,0,W,H);
+    m.globalCompositeOperation='destination-out';
+    var FT=90, FS=48, FB=48, g;
+    g=m.createLinearGradient(0,0,0,FT);   g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,W,FT);
+    g=m.createLinearGradient(0,H,0,H-FB); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,H-FB,W,FB);
+    g=m.createLinearGradient(0,0,FS,0);   g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,FS,H);
+    g=m.createLinearGradient(W,0,W-FS,0); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(W-FS,0,FS,H);
+
+    function present(src){
+      ctx.clearRect(0,0,W,H);
+      ctx.drawImage(src,0,0,W,H);
+      ctx.globalCompositeOperation='destination-in';
+      ctx.drawImage(mask,0,0);
+      ctx.globalCompositeOperation='source-over';
     }
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ toImg(); return; }
-    v.addEventListener('error',toImg);
+
+    var activated=false, raf=null;
+    var poster=new Image();
+    poster.src='assets/couple-dua-poster.jpg';
+    poster.onload=function(){ if(!activated) present(poster); };
+
+    function loop(){
+      try{ present(v); }catch(e){}
+      if(v.ended||v.paused){ raf=null; return; }   // canvas holds the last drawn frame
+      raf=requestAnimationFrame(loop);
+    }
+    function startLoop(){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(loop); }
+
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // feathered poster only
+
+    // PART A — prime inside the first tap-for-more gesture: iOS only allows
+    // programmatic play() on a video that has already played within a user gesture
+    var primed=false;
+    function prime(){
+      if(primed) return; primed=true;
+      try{
+        var p=v.play();
+        v.pause(); v.currentTime=0;               // unlock registered; rewind silently
+        if(p&&p.catch) p.catch(function(err){
+          if(err && err.name==='NotAllowedError') primed=false; // real refusal: retry next tap
+        });
+      }catch(e){ primed=false; }
+    }
+    document.addEventListener('click',function(e){
+      if(e.target && e.target.closest && e.target.closest('.more')) prime();
+    },true);
+    document.addEventListener('keydown',function(e){
+      if((e.key==='Enter'||e.key===' ') && e.target && e.target.closest && e.target.closest('.more')) prime();
+    },true);
+
+    // PART B — every time the scene becomes active, restart from frame 0
+    function activate(){
+      activated=true;
+      v.currentTime=0;
+      var p=v.play();                              // no loop: ends holding the final frame
+      if(p&&p.then){ p.then(startLoop).catch(function(){ present(poster); }); }
+      else startLoop();
+    }
     var cio=new IntersectionObserver(function(es){
       es.forEach(function(en){
-        if(en.isIntersecting && !played){
-          played=true; cio.disconnect();          // re-entering the scene never replays
-          var p=v.play();                          // no loop: ends holding the final frame
-          if(p&&p.catch) p.catch(toImg);
-        }
+        if(en.isIntersecting){ activate(); }
+        else if(!v.paused){ v.pause(); }           // left the scene mid-play; next entry restarts
       });
     },{threshold:.5});
-    cio.observe(v);
+    cio.observe(canvas);
   })();
 
   // ----- ambient sound: fades in on the envelope tap, loops for the visit -----
