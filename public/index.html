@@ -166,11 +166,10 @@
     letter-spacing:.03em; line-height:1.45; text-decoration:none; display:block}
   /* the couple animation renders through a canvas: canvas is color-managed like CSS
      (video display pipelines aren't, esp. iOS), and it gets a true alpha edge feather */
-  /* canvas is taller than the 1:1 video: the artwork is drawn 170px (canvas space)
-     down, leaving clear space above the groom's head, whose hair meets the source
-     frame's very top edge. Negative margin buys that room from the gap above. */
-  .cd-vid{width:min(45vw,180px); aspect-ratio:960/1130; height:auto; display:block;
-    margin-top:-8px}
+  /* square 1:1 — the render carries its own margins (100px above the heads), so the
+     full frame is drawn 1:1 into the canvas and can never crop */
+  .cd-vid{width:min(45vw,180px); aspect-ratio:1/1; height:auto; display:block;
+    object-fit:contain}
   #coupleVid{position:absolute; width:2px; height:2px; opacity:0; pointer-events:none}
 
   /* 04 · rsvp (styled to match Scene 1) */
@@ -493,7 +492,7 @@
          target="_blank" rel="noopener" aria-label="Open venue address in Maps">
         1101 Airport Road<br>Lynchburg, VA 24502
       </a>
-      <canvas class="cd-vid" id="coupleCanvas" width="960" height="1130" aria-hidden="true"></canvas>
+      <canvas class="cd-vid" id="coupleCanvas" width="960" height="960" aria-hidden="true"></canvas>
       <video id="coupleVid" src="assets/couple-dua.mp4" muted playsinline preload="metadata"
              aria-hidden="true"></video>
       <div class="sd-arch" aria-hidden="true"></div>
@@ -736,24 +735,24 @@
     var v=document.getElementById('coupleVid');
     var canvas=document.getElementById('coupleCanvas');
     if(!v||!canvas) return;
-    var W=960, VH=960, TOP=170, H=VH+TOP;   // artwork drawn at y=TOP; above it stays clear
+    var W=960, H=960;                       // square: the full frame, drawn 1:1, never cropped
     var ctx=canvas.getContext('2d');
 
-    // alpha feather: only a light touch on the artwork's own top edge (the hair meets
-    // it), plus sides and bottom. Everything above TOP is simply never drawn.
+    // alpha feather so the artwork dissolves into the page instead of ending on a hard
+    // edge. Sized to the render's own margins (content spans y 100–918, x 176–767).
     var mask=document.createElement('canvas'); mask.width=W; mask.height=H;
     var m=mask.getContext('2d');
     m.fillStyle='#fff'; m.fillRect(0,0,W,H);
     m.globalCompositeOperation='destination-out';
-    var FT=22, FS=48, FB=48, g;
-    g=m.createLinearGradient(0,TOP,0,TOP+FT); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,TOP,W,FT);
-    g=m.createLinearGradient(0,H,0,H-FB);     g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,H-FB,W,FB);
-    g=m.createLinearGradient(0,0,FS,0);       g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,FS,H);
-    g=m.createLinearGradient(W,0,W-FS,0);     g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(W-FS,0,FS,H);
+    var FT=60, FS=48, FB=34, g;
+    g=m.createLinearGradient(0,0,0,FT);   g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,W,FT);
+    g=m.createLinearGradient(0,H,0,H-FB); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,H-FB,W,FB);
+    g=m.createLinearGradient(0,0,FS,0);   g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(0,0,FS,H);
+    g=m.createLinearGradient(W,0,W-FS,0); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); m.fillStyle=g; m.fillRect(W-FS,0,FS,H);
 
     function present(src){
       ctx.clearRect(0,0,W,H);
-      ctx.drawImage(src,0,TOP,W,VH);
+      ctx.drawImage(src,0,0,W,H);
       ctx.globalCompositeOperation='destination-in';
       ctx.drawImage(mask,0,0);
       ctx.globalCompositeOperation='source-over';
