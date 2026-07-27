@@ -59,6 +59,14 @@
   }
   @keyframes tapPulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.05)}}
   body.playing .tapOpen, body.opened .tapOpen{opacity:0}
+  /* ===== ambient sound toggle (appears once the ambience starts) ===== */
+  #soundToggle{
+    position:fixed; top:calc(env(safe-area-inset-top, 0px) + 14px); right:14px; z-index:260;
+    width:40px; height:40px; display:flex; align-items:center; justify-content:center; padding:0;
+    background:rgba(251,247,239,.85); border:1px solid #B8923E; border-radius:999px; cursor:pointer;
+  }
+  #soundToggle svg{display:block}
+
   #whiteOut{position:fixed; inset:0; z-index:300; background:#fff; opacity:0; pointer-events:none}
   #whiteOut.wo-in{opacity:1; transition:opacity .25s ease}
   #whiteOut.wo-out{opacity:0; transition:opacity .95s ease}
@@ -203,6 +211,10 @@
     <p class="tapOpen" aria-hidden="true">tap to open</p>
   </div>
   <div id="whiteOut" aria-hidden="true"></div>
+
+  <!-- ambient sound: birds + stream loop, started by the same tap that opens the envelope -->
+  <audio id="ambience" src="assets/ambience.m4a" loop preload="none"></audio>
+  <button id="soundToggle" type="button" aria-label="Mute background sound" hidden></button>
 
   <!-- gold butterfly template (retraced SVG) — instanced by JS, one hero + 9 minis -->
   <template id="bflyTemplate">
@@ -686,6 +698,49 @@
         anim.onfinish=function(){ d.classList.add('resting'); d.classList.remove('flying'); };
       });
     }
+  })();
+
+  // ----- ambient sound: fades in on the envelope tap, loops for the visit -----
+  (function(){
+    var amb=document.getElementById('ambience');
+    var btn=document.getElementById('soundToggle');
+    var os=document.getElementById('openScreen');
+    if(!amb||!btn||!os) return;
+    var SPK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8923E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6.5 9H3v6h3.5L11 19V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg>';
+    var MUT='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8923E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6.5 9H3v6h3.5L11 19V5Z"/><line x1="15" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="15" y2="15"/></svg>';
+    btn.innerHTML=SPK;
+    var started=false, muted=false, fadeTimer=null;
+    function fadeTo(target,ms){
+      clearInterval(fadeTimer);
+      var step=(target-amb.volume)/(ms/100);
+      fadeTimer=setInterval(function(){
+        var v=amb.volume+step;
+        if((step>0&&v>=target)||(step<0&&v<=target)){ amb.volume=target; clearInterval(fadeTimer); }
+        else amb.volume=v;
+      },100);
+    }
+    function startOnce(){
+      if(started) return; started=true;
+      amb.volume=0;
+      var p=amb.play();
+      if(p&&p.then){
+        p.then(function(){ btn.hidden=false; fadeTo(0.25,2000); })
+         .catch(function(){}); // some in-app browsers refuse — never block the invite
+      } else { btn.hidden=false; fadeTo(0.25,2000); }
+    }
+    os.addEventListener('click',startOnce);
+    os.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' ') startOnce(); });
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      muted=!muted; amb.muted=muted;
+      btn.innerHTML=muted?MUT:SPK;
+      btn.setAttribute('aria-label',muted?'Unmute background sound':'Mute background sound');
+    });
+    document.addEventListener('visibilitychange',function(){
+      if(!started) return;
+      if(document.hidden){ amb.pause(); }
+      else{ var p=amb.play(); if(p&&p.catch)p.catch(function(){}); }
+    });
   })();
 
   // ----- "tap for more information" affordance — every scene but the last -----
