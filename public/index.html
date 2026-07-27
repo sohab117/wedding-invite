@@ -135,17 +135,27 @@
   .more .chev{display:block; animation:chevBounce 2s ease-in-out infinite}
   @keyframes chevBounce{0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)}}
 
-  /* 03 · save the date (scaled to match Scene 1) */
-  .s-dates{background:linear-gradient(180deg,#f1f0e4,#edf0e2); gap:clamp(10px,1.8dvh,18px)}
-  .s-dates .lbl{font-size:clamp(13px,3.6vw,16px)}
-  .sd-line{font-family:var(--disp); font-size:clamp(18px,5vw,24px); color:#6B5E4E}
+  /* 03 · save the date (tightened so the couple illustration fits in 100dvh) */
+  .s-dates{background:linear-gradient(180deg,#f1f0e4,#edf0e2);
+    padding:24px 30px; gap:clamp(8px,1.5dvh,14px)}
+  .s-dates .lbl{font-size:clamp(12px,3.3vw,14px)}
+  .sd-line{font-family:var(--disp); font-size:clamp(17px,4.6vw,22px); color:#6B5E4E}
   .sd-date{font-family:var(--script); font-weight:400; font-size:clamp(34px,10vw,46px);
-    line-height:1.35; color:#7A2E2E; margin-top:4px}
-  .sd-time{font-family:var(--disp); font-size:clamp(18px,5vw,24px); color:#B8923E;
-    letter-spacing:.08em; margin-top:2px}
-  .sd-divider{width:64px; height:1px; background:rgba(184,146,62,.6); margin:10px auto}
-  .sd-addr{font-family:var(--disp); font-size:clamp(18px,5vw,22px); color:#6B5E4E;
-    letter-spacing:.03em; line-height:1.5; text-decoration:none; display:block}
+    line-height:1.35; color:#7A2E2E; margin-top:2px}
+  .sd-time{font-family:var(--disp); font-size:clamp(16px,4.4vw,20px); color:#B8923E;
+    letter-spacing:.08em}
+  .sd-divider{width:64px; height:1px; background:rgba(184,146,62,.6); margin:8px auto}
+  .sd-addr{font-family:var(--disp); font-size:clamp(15px,4.2vw,17px); color:#6B5E4E;
+    letter-spacing:.03em; line-height:1.45; text-decoration:none; display:block}
+  .cd-vid{width:min(54vw,230px); aspect-ratio:828/1108; height:auto; display:block;
+    /* melt the illustration's paper into the scene: multiply + feathered edges */
+    mix-blend-mode:multiply;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%),
+      linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+    -webkit-mask-composite:source-in;
+    mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%),
+      linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+    mask-composite:intersect}
 
   /* 04 · rsvp (styled to match Scene 1) */
   .s-rsvp{background:linear-gradient(180deg,#f6f1e4,#efe7d6)}
@@ -467,6 +477,9 @@
          target="_blank" rel="noopener" aria-label="Open venue address in Maps">
         1101 Airport Road<br>Lynchburg, VA 24502
       </a>
+      <video class="cd-vid" id="coupleVid" src="assets/couple-dua.mp4"
+             poster="assets/couple-dua-poster.jpg" muted playsinline preload="metadata"
+             aria-hidden="true"></video>
     </section>
 
     <section class="scene s-rsvp">
@@ -698,6 +711,31 @@
         anim.onfinish=function(){ d.classList.add('resting'); d.classList.remove('flying'); };
       });
     }
+  })();
+
+  // ----- couple illustration (save-the-date) — plays once when the scene appears -----
+  (function(){
+    var v=document.getElementById('coupleVid'); if(!v) return;
+    var played=false;
+    function toImg(){
+      if(!v.parentNode) return;
+      var img=document.createElement('img');
+      img.className='cd-vid'; img.src='assets/couple-dua-poster.jpg'; img.alt='';
+      img.setAttribute('aria-hidden','true');
+      v.parentNode.replaceChild(img,v);
+    }
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ toImg(); return; }
+    v.addEventListener('error',toImg);
+    var cio=new IntersectionObserver(function(es){
+      es.forEach(function(en){
+        if(en.isIntersecting && !played){
+          played=true; cio.disconnect();          // re-entering the scene never replays
+          var p=v.play();                          // no loop: ends holding the final frame
+          if(p&&p.catch) p.catch(toImg);
+        }
+      });
+    },{threshold:.5});
+    cio.observe(v);
   })();
 
   // ----- ambient sound: fades in on the envelope tap, loops for the visit -----
